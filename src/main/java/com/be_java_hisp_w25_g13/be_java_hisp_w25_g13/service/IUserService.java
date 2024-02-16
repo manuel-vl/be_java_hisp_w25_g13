@@ -1,0 +1,14 @@
+package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
+
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.NumberDTO;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.UserDTO;
+
+import java.util.List;
+
+public interface IUserService {
+    UserDTO addUser(UserDTO userDto);
+    List<UserDTO> getFollowers(Integer userId, String orderBy);
+    List<UserDTO> getFollowed(Integer userId, String orderBy);
+    UserDTO getUserById(Integer userId);
+    NumberDTO getNumberOfFollowers(Integer userId);
+}
