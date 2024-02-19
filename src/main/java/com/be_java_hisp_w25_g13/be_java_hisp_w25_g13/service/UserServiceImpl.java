@@ -105,7 +105,8 @@ public class UserServiceImpl implements IUserService{
         }
         User foundUser = user.get();
 
-        List<Seller> followingList = orderSellerList(foundUser.getFollowing(), OrderBy);
+        List<User> followingList = orderUserList(foundUser.getFollowing().stream().map(s -> (User) s).toList(), OrderBy);
+
         return new FollowedDTO(
                 foundUser.getUserId(),
                 foundUser.getUserName(),
@@ -129,16 +130,6 @@ public class UserServiceImpl implements IUserService{
             return OrderBy.orderByUserDes(users);
         }
         return users;
-    }
-
-    private List<Seller> orderSellerList(List<Seller> sellers, String orderBy){
-        if(orderBy.equalsIgnoreCase("asc")){
-            return OrderBy.orderBySellerAsc(sellers);
-        }
-        if(orderBy.equalsIgnoreCase("desc")){
-            return OrderBy.orderBySellerDes(sellers);
-        }
-        return sellers;
     }
 
 }

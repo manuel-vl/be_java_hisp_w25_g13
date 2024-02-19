@@ -22,19 +22,6 @@ public class OrderBy {
         return listOrderByDes;
     }
 
-    public static List<Seller> orderBySellerAsc(List<Seller> listSellers){
-        List<Seller> listOrderByAsc =listSellers.stream()
-                .sorted(Comparator.comparing(User::getUserName))
-                .collect(Collectors.toList());
-        return listOrderByAsc;
-    }
-    public static List<Seller> orderBySellerDes(List<Seller> listSellers){
-        List<Seller> listOrderByDes = listSellers.stream()
-                .sorted((x,y)->y.getUserName().compareTo(x.getUserName()))
-                .collect(Collectors.toList());
-        return listOrderByDes;
-    }
-
     public static List<Post> orderByDateAsc(List<Post> listPosts){
         List<Post> listOrderByAsc = listPosts.stream()
                 .sorted(Comparator.comparing(Post::getDate))
