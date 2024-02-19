@@ -13,7 +13,9 @@ public class PostRepositoryImpl implements IPostRepository{
     List<Post> posts = new ArrayList<>();
     @Override
     public Post addPost(Post post) {
-        return null;
+        posts.add(post);
+
+        return post;
     }
 
     @Override

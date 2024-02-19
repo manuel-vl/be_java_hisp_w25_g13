@@ -23,6 +23,36 @@ public class UserServiceImpl implements IUserService{
 
     @Autowired
     IUserRepository userRepository;
+
+    @Override
+    public void followUser(Integer userId, Integer userIdToFollow) {
+        if (userId.equals(userIdToFollow)) {
+            throw new BadRequestException("El vendedor no se puede seguir a si mismo");
+        }
+
+        Optional<User> optionalUser = userRepository.getUserById(userId);
+
+        if (optionalUser.isEmpty()) {
+            throw new NotFoundException("El id de este usuario no se encuentra registrado");
+        }
+
+        Optional<User> optionalUserToFollow = userRepository.getUserById(userIdToFollow);
+        if (optionalUserToFollow.isEmpty()) {
+            throw new NotFoundException("El id del vendedor a seguir no se encuentra registrado");
+        }
+
+        User userToFollow = optionalUserToFollow.get();
+
+        if (!(userToFollow instanceof Seller seller)) {
+            throw new BadRequestException("El id del vendedor a seguir no se encuentra registrado");
+        }
+
+        User user = optionalUser.get();
+
+        user.getFollowing().add(seller);
+        seller.getFollowers().add(user);
+    }
+
     @Override
     public UserDTO addUser(UserDTO userDto) {
         return null;
@@ -30,7 +60,8 @@ public class UserServiceImpl implements IUserService{
 
     @Override
     public FollowersDTO getFollowers(Integer userId) {
-        return getFollowersAuxFunction(userId);
+        List<User> followers = getFollowersAuxFunction(userId);
+        return Mapper.toFollowersDTO(userRepository.getUserById(userId).get(),followers);
     }
 
     @Override
@@ -41,9 +72,9 @@ public class UserServiceImpl implements IUserService{
     @Override
     public FollowersDTO getFollowers(Integer userId, String orderBy) {
         //TODO: agregar orden.
-        FollowersDTO followersDTO = getFollowersAuxFunction(userId);
+        List<User> followers = getFollowersAuxFunction(userId);
+        return Mapper.toFollowersDTO(userRepository.getUserById(userId).get(),followers);
 
-        return followersDTO;
     }
 
     @Override
@@ -88,8 +119,7 @@ public class UserServiceImpl implements IUserService{
         }
 
     }
-
-    private FollowersDTO getFollowersAuxFunction(Integer userId){
+    private List<User> getFollowersAuxFunction(Integer userId){
         Optional<User> user = userRepository.getUserById(userId);
         if(user.isEmpty()){
             throw new NotFoundException("El id de este usuario no se encuentra registrado");
@@ -97,15 +127,7 @@ public class UserServiceImpl implements IUserService{
         if(!(user.get() instanceof Seller)){
             throw new BadRequestException("El id de este usuario no es el de un vendedor");
         }
-        List<UserDTO> userDTOS = new ArrayList<>();
-        if(((Seller) user.get()).getFollowers().isEmpty()){
-            throw new WrongDataException("No sigue a nadie");
-        }
-        for (User userAux:
-                ((Seller) user.get()).getFollowers()) {
-            userDTOS.add(new UserDTO(userAux.getUserId(),userAux.getUserName()));
-        }
-
-        return new FollowersDTO(user.get().getUserId(),user.get().getUserName(),userDTOS);
+        return ((Seller) user.get()).getFollowers();
     }
+
 }

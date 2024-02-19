@@ -5,10 +5,12 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.NumberDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowedDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.UserDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service.IUserService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +24,11 @@ public class UserController {
     @Autowired
     IUserService userService;
 
+    @PostMapping("/{userId}/follow/{userIdToFollow}")
+    public ResponseEntity<Void> follow(@PathVariable Integer userId, @PathVariable Integer userIdToFollow) {
+        userService.followUser(userId, userIdToFollow);
+        return ResponseEntity.noContent().build();
+    }
     @GetMapping("/{userId}/followers/count")
     public ResponseEntity<NumberDTO> getFollowersCount(@PathVariable Integer userId){
         return ResponseEntity.ok().body(userService.getNumberOfFollowers(userId));

@@ -14,13 +14,11 @@ public class Seller extends User{
 
     public Seller(Integer userId, String userName){
         super(userId, userName);
-        this.Followers = new ArrayList<>();
     }
 
     public Seller(Integer userId, String userName, List<User> followers) {
         super(userId, userName);
         Followers = followers;
     }
-
-    private List<User> Followers;
+    private List<User> Followers = new ArrayList<>();
 }
