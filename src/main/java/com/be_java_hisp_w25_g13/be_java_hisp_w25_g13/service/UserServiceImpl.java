@@ -22,6 +22,36 @@ public class UserServiceImpl implements IUserService{
 
     @Autowired
     IUserRepository userRepository;
+
+    @Override
+    public void followUser(Integer userId, Integer userIdToFollow) {
+        if (userId.equals(userIdToFollow)) {
+            throw new BadRequestException("El vendedor no se puede seguir a si mismo");
+        }
+
+        Optional<User> optionalUser = userRepository.getUserById(userId);
+
+        if (optionalUser.isEmpty()) {
+            throw new NotFoundException("El id de este usuario no se encuentra registrado");
+        }
+
+        Optional<User> optionalUserToFollow = userRepository.getUserById(userIdToFollow);
+        if (optionalUserToFollow.isEmpty()) {
+            throw new NotFoundException("El id del vendedor a seguir no se encuentra registrado");
+        }
+
+        User userToFollow = optionalUserToFollow.get();
+
+        if (!(userToFollow instanceof Seller seller)) {
+            throw new BadRequestException("El id del vendedor a seguir no se encuentra registrado");
+        }
+
+        User user = optionalUser.get();
+
+        user.getFollowing().add(seller);
+        seller.getFollowers().add(user);
+    }
+
     @Override
     public UserDTO addUser(UserDTO userDto) {
         return null;
