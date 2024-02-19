@@ -163,7 +163,7 @@ public class UserServiceImpl implements IUserService{
             return new SellerPostDTO(id, OrderBy.orderByDateAsc(response).stream().map(y -> Mapper.mapPostToPost2DTO(y)).toList());
         }
 
-        throw new BadRequestException("El metodo de ordenamiento debe estar entre date_asc, date_desc o no tener");
+        throw new BadRequestException("El metodo de ordenamiento debe estar entre date_asc, date_desc o no tener ninguno");
 
 
 
