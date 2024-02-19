@@ -9,4 +9,5 @@ public interface IPostRepository {
 
     Post addPost(Post post);
     List<Post> filterByDateAndIdUsuario(Integer idUsuario, LocalDate date);
+
 }

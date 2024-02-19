@@ -2,6 +2,7 @@ package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository;
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
+import org.springframework.stereotype.Repository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
 @Repository
 public class UserRepositoryImpl implements IUserRepository{
 
