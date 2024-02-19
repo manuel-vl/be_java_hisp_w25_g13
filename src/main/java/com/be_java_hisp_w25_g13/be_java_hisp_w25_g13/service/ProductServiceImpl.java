@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,5 +27,12 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public List<ProductDTO> getProducts() {
         return productRepository.getAll().stream().map(Mapper::mapProductToProductDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Product> getProductById(Integer id) {
+        Optional<Product> product= productRepository.getProductById(id);
+
+        return product;
     }
 }

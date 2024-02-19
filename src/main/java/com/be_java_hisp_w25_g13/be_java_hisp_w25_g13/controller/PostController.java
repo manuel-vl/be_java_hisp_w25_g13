@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/products")
+
 public class PostController {
     @Autowired
     ProductServiceImpl productService;
@@ -26,8 +28,8 @@ public class PostController {
     @Autowired
     IUserService userService;
     @GetMapping("followed/{userId}/list")
-    public ResponseEntity<?> publiProdSeller(@PathVariable Integer userId){
-        return new ResponseEntity<>(userService.getPostPerSeller(userId), HttpStatus.OK);
+    public ResponseEntity<?> publiProdSeller(@PathVariable Integer userId, @RequestParam(defaultValue = "none") String order ){
+        return new ResponseEntity<>(userService.getPostPerSeller(userId, order), HttpStatus.OK);
     }
     @PostMapping("/post")
     public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO){
