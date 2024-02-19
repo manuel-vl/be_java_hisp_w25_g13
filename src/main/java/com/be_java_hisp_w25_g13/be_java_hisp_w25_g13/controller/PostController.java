@@ -23,13 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/product/post")
 public class PostController {
     @Autowired
-    IPostService service;
+    IPostService postService;
     @Autowired
     IUserService userService;
     @GetMapping("followed/{userId}/list")
     public ResponseEntity<?> publiProdSeller(@PathVariable Integer userId){
         return new ResponseEntity<>(userService.getPostPerSeller(userId), HttpStatus.OK);}
-    PostServiceImpl postService;
 
     @PostMapping()
     public ResponseEntity<?> createPost(@RequestBody PostDTO postDTO){
