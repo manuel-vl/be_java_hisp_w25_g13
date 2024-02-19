@@ -13,7 +13,6 @@ public interface IUserService {
     FollowersDTO getFollowers(Integer userId);
     FollowersDTO getFollowers(Integer userId, String orderBy);
     FollowedDTO getFollowed(Integer userId, String orderBy);
-    FollowedDTO getFollowed(Integer userId);
     UserDTO getUserById(Integer userId);
     NumberDTO getNumberOfFollowers(Integer userId);
     List<UserDTO> getAllUsers();

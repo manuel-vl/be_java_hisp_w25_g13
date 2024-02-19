@@ -66,11 +66,6 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
-    public FollowedDTO getFollowed(Integer userId, String orderBy) {
-        return null;
-    }
-
-    @Override
     public FollowersDTO getFollowers(Integer userId, String orderBy) {
 
         List<User> followers = getFollowersAuxFunction(userId);
@@ -103,17 +98,18 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
-    public FollowedDTO getFollowed(Integer userId){
+    public FollowedDTO getFollowed(Integer userId, String OrderBy){
         Optional<User> user = userRepository.getUserById(userId);
         if(user.isEmpty()){
             throw new NotFoundException("El id de este usuario no se encuentra registrado");
         }
         User foundUser = user.get();
 
+        List<Seller> followingList = orderSellerList(foundUser.getFollowing(), OrderBy);
         return new FollowedDTO(
                 foundUser.getUserId(),
                 foundUser.getUserName(),
-                foundUser.getFollowing().stream().map(Mapper::mapUserToUserDto).toList());
+                followingList.stream().map(Mapper::mapUserToUserDto).toList());
     }
     private List<User> getFollowersAuxFunction(Integer userId){
         Optional<User> user = userRepository.getUserById(userId);
@@ -133,6 +129,16 @@ public class UserServiceImpl implements IUserService{
             return OrderBy.orderByUserDes(users);
         }
         return users;
+    }
+
+    private List<Seller> orderSellerList(List<Seller> sellers, String orderBy){
+        if(orderBy.equalsIgnoreCase("asc")){
+            return OrderBy.orderBySellerAsc(sellers);
+        }
+        if(orderBy.equalsIgnoreCase("desc")){
+            return OrderBy.orderBySellerDes(sellers);
+        }
+        return sellers;
     }
 
 }

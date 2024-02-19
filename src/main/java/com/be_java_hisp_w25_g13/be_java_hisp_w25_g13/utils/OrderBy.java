@@ -1,6 +1,7 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils;
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
 
 import java.util.Comparator;
@@ -16,6 +17,19 @@ public class OrderBy {
     }
     public static List<User> orderByUserDes(List<User> listUsers){
         List<User> listOrderByDes = listUsers.stream()
+                .sorted((x,y)->y.getUserName().compareTo(x.getUserName()))
+                .collect(Collectors.toList());
+        return listOrderByDes;
+    }
+
+    public static List<Seller> orderBySellerAsc(List<Seller> listSellers){
+        List<Seller> listOrderByAsc =listSellers.stream()
+                .sorted(Comparator.comparing(User::getUserName))
+                .collect(Collectors.toList());
+        return listOrderByAsc;
+    }
+    public static List<Seller> orderBySellerDes(List<Seller> listSellers){
+        List<Seller> listOrderByDes = listSellers.stream()
                 .sorted((x,y)->y.getUserName().compareTo(x.getUserName()))
                 .collect(Collectors.toList());
         return listOrderByDes;
