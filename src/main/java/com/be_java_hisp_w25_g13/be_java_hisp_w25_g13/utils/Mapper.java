@@ -20,11 +20,24 @@ public class Mapper {
     }
 
     public static Product mapProductDtoToProduct(ProductDTO productDTO){
-        return new Product(productDTO.getProduct_id(), productDTO.getProduct_name(), productDTO.getType(), productDTO.getBrand(), productDTO.getColor(), productDTO.getNotes());
+        return new Product(
+                productDTO.getProduct_id(),
+                productDTO.getProduct_name(),
+                productDTO.getType(),
+                productDTO.getBrand(),
+                productDTO.getColor(),
+                productDTO.getNotes()
+        );
     }
 
     public static Post mapPostDtoToPost(PostDTO postDTO){
-        return new Post(postDTO.getUser_id(), postDTO.getDate(), mapProductDtoToProduct(postDTO.getProduct()), postDTO.getCategory(), postDTO.getPrice());
+        return new Post(
+                postDTO.getUser_id(),
+                postDTO.getDate(),
+                mapProductDtoToProduct(postDTO.getProduct()),
+                postDTO.getCategory(),
+                postDTO.getPrice()
+        );
     }
 
     public static ProductDTO mapProductToProductDto(Product product){

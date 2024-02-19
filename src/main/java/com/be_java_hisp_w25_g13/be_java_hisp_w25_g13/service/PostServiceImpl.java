@@ -4,6 +4,7 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.PostDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.ProductDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Product;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IPostRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Mapper;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostServiceImpl implements IPostService{
@@ -22,12 +24,11 @@ public class PostServiceImpl implements IPostService{
     @Override
     public PostDTO addPost(PostDTO postDTO) {
         Post post= Mapper.mapPostDtoToPost(postDTO);
-        List<ProductDTO> listProducts=productService.getProducts();
 
-        boolean existProduct=listProducts.stream().anyMatch(p -> p.getProduct_id().equals(post.getProduct().getProduct_id()));
+        Optional<Product> product=productService.getProductById(post.getProduct().getProduct_id());
 
-        if(existProduct){
-            throw new NotFoundException("No se puede crear otro post para este producto");
+        if(product.isPresent()){
+            throw new BadRequestException("Ya existe un post para este producto");
         }
 
         postRepository.addPost(post);

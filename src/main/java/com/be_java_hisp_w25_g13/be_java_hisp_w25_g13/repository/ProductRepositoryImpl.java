@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ProductRepositoryImpl implements IProductRepository{
@@ -21,4 +22,8 @@ public class ProductRepositoryImpl implements IProductRepository{
         return this.products;
     }
 
+    @Override
+    public Optional<Product> getProductById(Integer id) {
+        return products.stream().filter(product -> product.getProduct_id().equals(id)).findFirst();
+    }
 }
