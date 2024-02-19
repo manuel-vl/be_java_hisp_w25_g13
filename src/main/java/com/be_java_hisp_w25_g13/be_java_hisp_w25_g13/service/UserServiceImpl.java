@@ -1,6 +1,7 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.*;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
@@ -140,21 +141,28 @@ public class UserServiceImpl implements IUserService{
 
 
     @Override
-    public SellerPostDTO getPostPerSeller(Integer id) {
+    public SellerPostDTO getPostPerSeller(Integer id, String order) {
         Optional<User> user = userRepository.getUserById(id);
         if (!user.isPresent()){
             throw new NotFoundException("El usuario no ha sido encontrado");
         }
         LocalDate hourNow = LocalDate.now();
-        List<Post2DTO> response = new ArrayList<>();
-        user.get().getFollowing().stream().filter(x -> {
+        List<Post> response = new ArrayList<>();
+         user.get().getFollowing().stream().filter(x -> {
             if (postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow).isEmpty()){
                 return false;
             }
             return true;
-        }).forEach(x ->  postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow)
-                .stream().forEach(y -> response.add(Mapper.mapPostToPost2DTO(y))));
-        return new SellerPostDTO(id, response);
+        }).forEach(x ->  postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow).forEach(y -> response.add(y)));
+
+        if (order.equals("none")) {
+            return new SellerPostDTO(id, response.stream().map(y -> Mapper.mapPostToPost2DTO(y)).toList());
+        } else if (order.equals("date_asc")){
+            return new SellerPostDTO(id, OrderBy.orderByDateAsc(response).stream().map(y -> Mapper.mapPostToPost2DTO(y)).toList());
+        } else if (order.equals("date_desc")) {
+            return new SellerPostDTO(id, OrderBy.orderByDateAsc(response).stream().map(y -> Mapper.mapPostToPost2DTO(y)).toList());
+        }
+        return null;
 
     }
 

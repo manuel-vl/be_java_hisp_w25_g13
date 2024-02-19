@@ -10,27 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/product/post")
+@RequestMapping("/product")
 public class PostController {
     @Autowired
     IPostService postService;
     @Autowired
     IUserService userService;
     @GetMapping("followed/{userId}/list")
-    public ResponseEntity<?> publiProdSeller(@PathVariable Integer userId){
-        return new ResponseEntity<>(userService.getPostPerSeller(userId), HttpStatus.OK);}
+    public ResponseEntity<?> publiProdSeller(@PathVariable Integer userId, @RequestParam(defaultValue = "none") String order ){
+        return new ResponseEntity<>(userService.getPostPerSeller(userId, order), HttpStatus.OK);}
 
-    @PostMapping()
+    @PostMapping("/post")
     public ResponseEntity<?> createPost(@RequestBody PostDTO postDTO){
         return new ResponseEntity<>(postService.addPost(postDTO), HttpStatus.OK);
     }
