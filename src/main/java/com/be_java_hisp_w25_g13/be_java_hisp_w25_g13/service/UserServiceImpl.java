@@ -12,7 +12,7 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IUserRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
 import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
@@ -34,12 +34,20 @@ public class UserServiceImpl implements IUserService{
 
     @Override
     public FollowersDTO getFollowers(Integer userId, String orderBy) {
-        //TODO: verificar id
-        //TODO: verificar usuario seller
-        //TODO: obtener followers
-        //TODO: mapear DTO y retornarlo.
-
-        return null;
+        //TODO: integrar solucion de daniela.
+        Optional<User> user = userRepository.getUserById(userId);
+        if(user.isEmpty()){
+            throw new NotFoundException("El id de este usuario no se encuentra registrado");
+        }
+        if(!(user.get() instanceof Seller)){
+            throw new BadRequestException("El id de este usuario no es el de un vendedor");
+        }
+        List<UserDTO> userDTOS = new ArrayList<>();
+        for (User userAux:
+                ((Seller) user.get()).getFollowers()) {
+            userDTOS.add(new UserDTO(userAux.getUserId(),userAux.getUserName()));
+        }
+        return new FollowersDTO(user.get().getUserId(),user.get().getUserName(),userDTOS);
     }
 
     @Override
@@ -49,20 +57,14 @@ public class UserServiceImpl implements IUserService{
 
     @Override
     public NumberDTO getNumberOfFollowers(Integer userId) {
-        //TODO: verificar existencia usuario
-        //TODO: verificar id usuario seller
-        //TODO: obtener nombre del usuario
-        //TODO: obtener numero de seguidores
-        //TODO: retornar DTO
         Optional<User> user = userRepository.getUserById(userId);
         if(user.isEmpty()){
             throw new NotFoundException("El id de este usuario no se encuentra registrado");
         }
         if(!(user.get() instanceof Seller)){
-
+            throw new BadRequestException("El id de este usuario no es el de un vendedor");
         }
-
-        return null;
+        return new NumberDTO(user.get().getUserId(),user.get().getUserName(),((Seller) user.get()).getFollowers().size());
     }
 
     @Override
