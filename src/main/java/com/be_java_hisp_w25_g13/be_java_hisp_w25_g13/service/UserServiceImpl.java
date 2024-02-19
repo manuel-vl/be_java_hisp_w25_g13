@@ -1,5 +1,6 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
 
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowedDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowersDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.NumberDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.UserDTO;
@@ -8,10 +9,11 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IUserRepository;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +28,7 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
-    public List<UserDTO> getFollowed(Integer userId, String orderBy) {
+    public FollowedDTO getFollowed(Integer userId, String orderBy) {
         return null;
     }
 
@@ -63,5 +65,31 @@ public class UserServiceImpl implements IUserService{
             throw new BadRequestException("El id de este usuario no es el de un vendedor");
         }
         return new NumberDTO(user.get().getUserId(),user.get().getUserName(),((Seller) user.get()).getFollowers().size());
+    }
+
+    @Override
+    public List<UserDTO> getAllUsers(){
+        return userRepository.getAll().stream()
+                .map(u -> new UserDTO(u.getUserId(), u.getUserName()))
+                .toList();
+    }
+
+    @Override
+    public FollowedDTO getFollowed(Integer userId){
+        Optional<User> user = userRepository.getUserById(userId);
+        if(user.isEmpty()){
+            throw new NotFoundException("El id de este usuario no se encuentra registrado");
+        }
+        User foundUser = user.get();
+        if(foundUser instanceof User){
+            throw new BadRequestException("El id proporcionado corresponde a un Usuario, un usuario no tiene seguidores");
+        }else{
+            Seller foundSeller = (Seller) foundUser;
+            return new FollowedDTO(
+                    foundUser.getUserId(),
+                    foundSeller.getUserName(),
+                    foundSeller.getFollowers().stream().map(Mapper::mapUserToUserDto).toList());
+        }
+
     }
 }

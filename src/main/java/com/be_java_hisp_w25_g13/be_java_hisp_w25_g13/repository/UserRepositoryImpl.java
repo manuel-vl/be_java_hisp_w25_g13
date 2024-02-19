@@ -2,8 +2,14 @@ package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository;
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +19,12 @@ public class UserRepositoryImpl implements IUserRepository{
 
     List<User> users = new ArrayList<>();
 
+    public UserRepositoryImpl() {
+
+        this.users = loadUserDataBase();
+        this.users.addAll(loadSellerDataBase());
+    }
+
     @Override
     public User addUser(User user) {
         return null;
@@ -20,7 +32,7 @@ public class UserRepositoryImpl implements IUserRepository{
 
     @Override
     public List<User> getAll() {
-        return null;
+        return this.users;
     }
 
     @Override
@@ -33,5 +45,41 @@ public class UserRepositoryImpl implements IUserRepository{
     @Override
     public Optional<Seller> getSellerById(Integer userId) {
         return null;
+    }
+
+    private List<User> loadUserDataBase() {
+        File file = null;
+        try {
+            file = ResourceUtils.getFile("classpath:users.json");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        TypeReference<List<User>> typeRef = new TypeReference<>() {};
+        List<User> users = null;
+        try {
+            users = objectMapper.readValue(file, typeRef);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    private List<Seller> loadSellerDataBase() {
+        File file = null;
+        try {
+            file = ResourceUtils.getFile("classpath:sellers.json");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        TypeReference<List<Seller>> typeRef = new TypeReference<>() {};
+        List<Seller> sellers = null;
+        try {
+            sellers = objectMapper.readValue(file, typeRef);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sellers;
     }
 }
