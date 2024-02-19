@@ -9,21 +9,29 @@ import java.util.stream.Collectors;
 
 public class OrderBy {
     public static List<User> orderByUserAsc(List<User> listUsers){
-        listUsers.stream().sorted(Comparator.comparing(User::getUserName)).forEach(System.out::println);
-        return listUsers;
+        List<User> listOrderByAsc =listUsers.stream()
+                .sorted(Comparator.comparing(User::getUserName))
+                .collect(Collectors.toList());
+        return listOrderByAsc;
     }
     public static List<User> orderByUserDes(List<User> listUsers){
-        listUsers.stream().sorted((x,y)->y.getUserName().compareTo(x.getUserName())).forEach(System.out::println);
-        return listUsers;
+        List<User> listOrderByDes = listUsers.stream()
+                .sorted((x,y)->y.getUserName().compareTo(x.getUserName()))
+                .collect(Collectors.toList());
+        return listOrderByDes;
     }
 
     public static List<Post> orderByDateAsc(List<Post> listPosts){
-        listPosts.stream().sorted(Comparator.comparing(Post::getDate)).forEach(System.out::println);
-        return listPosts;
+        List<Post> listOrderByAsc = listPosts.stream()
+                .sorted(Comparator.comparing(Post::getDate))
+                .collect(Collectors.toList());
+        return listOrderByAsc;
     }
     public static List<Post> orderByDateDes(List<Post> listPosts){
-        listPosts.stream().sorted((x,y)->y.getDate().compareTo(x.getDate())).forEach(System.out::println);
-        return listPosts;
+        List<Post> listOrderByDes = listPosts.stream()
+                .sorted((x,y)->y.getDate().compareTo(x.getDate()))
+                .collect(Collectors.toList());
+        return listOrderByDes;
     }
 
 }
