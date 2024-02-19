@@ -76,7 +76,7 @@ public class UserServiceImpl implements IUserService{
         }
         LocalDate hourNow = LocalDate.now();
         user.get().getFollowing().stream().filter( x -> {
-            if (postRepository.filterByUsuario(id).isEmpty()){
+            if (postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow).isEmpty()){
                 return false;
             }
             return true;

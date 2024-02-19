@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Data
 public class Post {
     Integer user_id;
+    Integer post_id;
     LocalDate date;
     Product product;
     Integer category;
