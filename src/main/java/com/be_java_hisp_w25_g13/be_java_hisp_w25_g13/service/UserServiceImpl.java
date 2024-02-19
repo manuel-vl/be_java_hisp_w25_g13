@@ -8,8 +8,10 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.WrongDataException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IUserRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Mapper;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.OrderBy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -82,26 +84,22 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
+    public FollowersDTO getFollowers(Integer userId) {
+        List<User> followers = getFollowersAuxFunction(userId);
+        return Mapper.toFollowersDTO(userRepository.getUserById(userId).get(),followers);
+    }
+
+    @Override
     public FollowedDTO getFollowed(Integer userId, String orderBy) {
         return null;
     }
 
     @Override
     public FollowersDTO getFollowers(Integer userId, String orderBy) {
-        //TODO: integrar solucion de daniela.
-        Optional<User> user = userRepository.getUserById(userId);
-        if(user.isEmpty()){
-            throw new NotFoundException("El id de este usuario no se encuentra registrado");
-        }
-        if(!(user.get() instanceof Seller)){
-            throw new BadRequestException("El id de este usuario no es el de un vendedor");
-        }
-        List<UserDTO> userDTOS = new ArrayList<>();
-        for (User userAux:
-                ((Seller) user.get()).getFollowers()) {
-            userDTOS.add(new UserDTO(userAux.getUserId(),userAux.getUserName()));
-        }
-        return new FollowersDTO(user.get().getUserId(),user.get().getUserName(),userDTOS);
+
+        List<User> followers = getFollowersAuxFunction(userId);
+        followers = orderUserList(followers,orderBy);
+        return Mapper.toFollowersDTO(userRepository.getUserById(userId).get(),followers);
     }
 
     @Override
@@ -141,4 +139,24 @@ public class UserServiceImpl implements IUserService{
                 foundUser.getUserName(),
                 foundUser.getFollowing().stream().map(Mapper::mapUserToUserDto).toList());
     }
+    private List<User> getFollowersAuxFunction(Integer userId){
+        Optional<User> user = userRepository.getUserById(userId);
+        if(user.isEmpty()){
+            throw new NotFoundException("El id de este usuario no se encuentra registrado");
+        }
+        if(!(user.get() instanceof Seller)){
+            throw new BadRequestException("El id de este usuario no es el de un vendedor");
+        }
+        return ((Seller) user.get()).getFollowers();
+    }
+    private List<User> orderUserList(List<User> users, String orderBy){
+        if(orderBy.equalsIgnoreCase("asc")){
+            return OrderBy.orderByUserAsc(users);
+        }
+        if(orderBy.equalsIgnoreCase("desc")){
+            return OrderBy.orderByUserDes(users);
+        }
+        return users;
+    }
+
 }
