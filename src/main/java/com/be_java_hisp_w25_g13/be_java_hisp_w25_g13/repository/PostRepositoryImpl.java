@@ -1,17 +1,21 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository;
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class PostRepositoryImpl implements IPostRepository{
 
     List<Post> posts = new ArrayList<>();
     @Override
     public Post addPost(Post post) {
-        return null;
+        posts.add(post);
+
+        return post;
     }
 
     @Override
