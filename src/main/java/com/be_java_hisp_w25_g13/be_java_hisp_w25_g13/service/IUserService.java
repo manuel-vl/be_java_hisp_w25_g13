@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface IUserService {
     UserDTO addUser(UserDTO userDto);
+    FollowersDTO getFollowers(Integer userId);
     FollowersDTO getFollowers(Integer userId, String orderBy);
     FollowedDTO getFollowed(Integer userId, String orderBy);
     FollowedDTO getFollowed(Integer userId);

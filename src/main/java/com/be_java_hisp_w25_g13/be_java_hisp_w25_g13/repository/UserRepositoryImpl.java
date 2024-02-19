@@ -11,18 +11,24 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class UserRepositoryImpl implements IUserRepository{
 
-    List<User> users = new ArrayList<>();
+    List<User> users;
 
     public UserRepositoryImpl() {
 
         this.users = loadUserDataBase();
         this.users.addAll(loadSellerDataBase());
+        this.users.add(new Seller(99,"prueba seller", Arrays.asList(
+                users.get(0),
+                users.get(1),
+                users.get(2)
+        )));
     }
 
     @Override

@@ -17,5 +17,10 @@ public class Seller extends User{
         this.Followers = new ArrayList<>();
     }
 
+    public Seller(Integer userId, String userName, List<User> followers) {
+        super(userId, userName);
+        Followers = followers;
+    }
+
     private List<User> Followers;
 }

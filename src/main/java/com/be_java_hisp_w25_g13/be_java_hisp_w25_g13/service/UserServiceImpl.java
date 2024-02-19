@@ -8,6 +8,7 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.WrongDataException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IUserRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,26 +29,21 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
+    public FollowersDTO getFollowers(Integer userId) {
+        return getFollowersAuxFunction(userId);
+    }
+
+    @Override
     public FollowedDTO getFollowed(Integer userId, String orderBy) {
         return null;
     }
 
     @Override
     public FollowersDTO getFollowers(Integer userId, String orderBy) {
-        //TODO: integrar solucion de daniela.
-        Optional<User> user = userRepository.getUserById(userId);
-        if(user.isEmpty()){
-            throw new NotFoundException("El id de este usuario no se encuentra registrado");
-        }
-        if(!(user.get() instanceof Seller)){
-            throw new BadRequestException("El id de este usuario no es el de un vendedor");
-        }
-        List<UserDTO> userDTOS = new ArrayList<>();
-        for (User userAux:
-                ((Seller) user.get()).getFollowers()) {
-            userDTOS.add(new UserDTO(userAux.getUserId(),userAux.getUserName()));
-        }
-        return new FollowersDTO(user.get().getUserId(),user.get().getUserName(),userDTOS);
+        //TODO: agregar orden.
+        FollowersDTO followersDTO = getFollowersAuxFunction(userId);
+
+        return followersDTO;
     }
 
     @Override
@@ -91,5 +87,25 @@ public class UserServiceImpl implements IUserService{
                     foundSeller.getFollowers().stream().map(Mapper::mapUserToUserDto).toList());
         }
 
+    }
+
+    private FollowersDTO getFollowersAuxFunction(Integer userId){
+        Optional<User> user = userRepository.getUserById(userId);
+        if(user.isEmpty()){
+            throw new NotFoundException("El id de este usuario no se encuentra registrado");
+        }
+        if(!(user.get() instanceof Seller)){
+            throw new BadRequestException("El id de este usuario no es el de un vendedor");
+        }
+        List<UserDTO> userDTOS = new ArrayList<>();
+        if(((Seller) user.get()).getFollowers().isEmpty()){
+            throw new WrongDataException("No sigue a nadie");
+        }
+        for (User userAux:
+                ((Seller) user.get()).getFollowers()) {
+            userDTOS.add(new UserDTO(userAux.getUserId(),userAux.getUserName()));
+        }
+
+        return new FollowersDTO(user.get().getUserId(),user.get().getUserName(),userDTOS);
     }
 }
