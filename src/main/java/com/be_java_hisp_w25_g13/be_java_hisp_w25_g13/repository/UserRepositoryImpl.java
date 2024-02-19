@@ -29,6 +29,10 @@ public class UserRepositoryImpl implements IUserRepository{
                 users.get(1),
                 users.get(2)
         )));
+        /*this.users.add(new Seller(99,"prueba seller", new ArrayList<>()
+        ));
+
+         */
     }
 
     @Override
