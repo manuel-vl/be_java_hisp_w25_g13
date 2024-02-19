@@ -5,13 +5,16 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.NumberDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.UserDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class UserServiceImpl implements IUserService{
 
     @Autowired
@@ -43,19 +46,13 @@ public class UserServiceImpl implements IUserService{
 
     @Override
     public NumberDTO getNumberOfFollowers(Integer userId) {
-        //TODO: verificar existencia usuario
-        //TODO: verificar id usuario seller
-        //TODO: obtener nombre del usuario
-        //TODO: obtener numero de seguidores
-        //TODO: retornar DTO
         Optional<User> user = userRepository.getUserById(userId);
         if(user.isEmpty()){
             throw new NotFoundException("El id de este usuario no se encuentra registrado");
         }
         if(!(user.get() instanceof Seller)){
-
+            throw new BadRequestException("El id de este usuario no es el de un vendedor");
         }
-
-        return null;
+        return new NumberDTO(user.get().getUserId(),user.get().getUserName(),((Seller) user.get()).getFollowers().size());
     }
 }

@@ -2,11 +2,13 @@ package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository;
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class UserRepositoryImpl implements IUserRepository{
 
     List<User> users = new ArrayList<>();
