@@ -10,7 +10,6 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -29,10 +28,21 @@ public class UserRepositoryImpl implements IUserRepository{
                 users.get(1),
                 users.get(2)
         )));
-        /*this.users.add(new Seller(99,"prueba seller", new ArrayList<>()
-        ));
-
-         */
+        this.users.add(new Seller(100,"John Travolta", Arrays.asList(
+                users.get(13),
+                users.get(12),
+                users.get(14)
+        )));
+        this.users.add(new Seller(101,"Leo Messi", Arrays.asList(
+                users.get(8),
+                users.get(9),
+                users.get(10)
+        )));
+        this.users.add(new Seller(102,"Neymar Jr", Arrays.asList(
+                users.get(8),
+                users.get(9),
+                users.get(10)
+        )));
     }
 
     @Override
@@ -51,12 +61,6 @@ public class UserRepositoryImpl implements IUserRepository{
                 .filter(user -> user.getUserId().equals(userId))
                 .findFirst();
     }
-
-    @Override
-    public Optional<Seller> getSellerById(Integer userId) {
-        return null;
-    }
-
     private List<User> loadUserDataBase() {
         File file = null;
         try {
