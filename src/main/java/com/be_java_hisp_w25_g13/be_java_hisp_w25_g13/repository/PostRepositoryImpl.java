@@ -3,9 +3,12 @@ package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PostRepositoryImpl implements IPostRepository{
+
+    List<Post> posts = new ArrayList<>();
     @Override
     public Post addPost(Post post) {
         return null;
