@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class sPostRepositoryImpl implements IPostRepository{
+public class PostRepositoryImpl implements IPostRepository{
 
     List<Post> posts = new ArrayList<>();
     @Override
