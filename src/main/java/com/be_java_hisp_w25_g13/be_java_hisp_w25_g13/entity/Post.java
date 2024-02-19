@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 public class Post {
-    Integer user_id;
+    Integer userId;
     LocalDate date;
     Product product;
     Integer category;

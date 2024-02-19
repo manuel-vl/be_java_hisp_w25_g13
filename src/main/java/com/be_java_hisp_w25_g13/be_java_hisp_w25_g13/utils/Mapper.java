@@ -20,15 +20,15 @@ public class Mapper {
     }
 
     public static Product mapProductDtoToProduct(ProductDTO productDTO){
-        return new Product(productDTO.getProduct_id(), productDTO.getProduct_name(), productDTO.getType(), productDTO.getBrand(), productDTO.getColor(), productDTO.getNotes());
+        return new Product(productDTO.getProductId(), productDTO.getProductName(), productDTO.getType(), productDTO.getBrand(), productDTO.getColor(), productDTO.getNotes());
     }
 
     public static Post mapPostDtoToPost(PostDTO postDTO){
-        return new Post(postDTO.getUser_id(), postDTO.getDate(), mapProductDtoToProduct(postDTO.getProduct()), postDTO.getCategory(), postDTO.getPrice());
+        return new Post(postDTO.getUserId(), postDTO.getDate(), mapProductDtoToProduct(postDTO.getProduct()), postDTO.getCategory(), postDTO.getPrice());
     }
 
     public static ProductDTO mapProductToProductDto(Product product){
-        return new ProductDTO(product.getProduct_id(), product.getBrand(), product.getType(), product.getProduct_name(), product.getColor(), product.getNotes());
+        return new ProductDTO(product.getProductId(), product.getBrand(), product.getType(), product.getProductName(), product.getColor(), product.getNotes());
     }
   
     public static FollowersDTO toFollowersDTO(User user, List<User> users) {

@@ -8,14 +8,12 @@ import java.util.List;
 
 @Repository
 public class ProductRepositoryImpl implements IProductRepository{
-    List<Product> products=new ArrayList<>();
+    List<Product> products = new ArrayList<>();
 
     @Override
     public void addProduct(Product product) {
         products.add(product);
-
     }
-
     @Override
     public List<Product> getAll() {
         return this.products;
