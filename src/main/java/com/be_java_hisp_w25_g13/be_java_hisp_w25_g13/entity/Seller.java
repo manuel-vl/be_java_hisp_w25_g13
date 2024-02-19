@@ -16,5 +16,9 @@ public class Seller extends User{
         super(userId, userName);
     }
 
+    public Seller(Integer userId, String userName, List<User> followers) {
+        super(userId, userName);
+        Followers = followers;
+    }
     private List<User> Followers = new ArrayList<>();
 }
