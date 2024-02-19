@@ -15,7 +15,7 @@ public class PostServiceImpl implements IPostService{
     IPostRepository postRepository;
     @Override
     public PostDTO addPost(PostDTO postDTO) {
-        Post post= Mapper.mapPostDTOToPost(postDTO);
+        Post post= Mapper.mapPostDtoToPost(postDTO);
         postRepository.addPost(post);
 
         return postDTO;
