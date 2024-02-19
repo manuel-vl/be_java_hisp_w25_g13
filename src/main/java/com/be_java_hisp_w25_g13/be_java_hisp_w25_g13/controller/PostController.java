@@ -24,10 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
     @Autowired
     IPostService service;
+    @Autowired
     IUserService userService;
     @GetMapping("followed/{userId}/list")
-    public ResponseEntity<?> publiProdSeller(@PathVariable Integer id){
-        return new ResponseEntity<>(userService.getPostPerSeller(id), HttpStatus.OK);}
+    public ResponseEntity<?> publiProdSeller(@PathVariable Integer userId){
+        return new ResponseEntity<>(userService.getPostPerSeller(userId), HttpStatus.OK);}
     PostServiceImpl postService;
 
     @PostMapping()
