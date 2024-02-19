@@ -111,15 +111,10 @@ public class UserServiceImpl implements IUserService{
             throw new NotFoundException("El id de este usuario no se encuentra registrado");
         }
         User foundUser = user.get();
-        if(foundUser instanceof User){
-            throw new BadRequestException("El id proporcionado corresponde a un Usuario, un usuario no tiene seguidores");
-        }else{
-            Seller foundSeller = (Seller) foundUser;
-            return new FollowedDTO(
-                    foundUser.getUserId(),
-                    foundSeller.getUserName(),
-                    foundSeller.getFollowers().stream().map(Mapper::mapUserToUserDto).toList());
-        }
 
+        return new FollowedDTO(
+                foundUser.getUserId(),
+                foundUser.getUserName(),
+                foundUser.getFollowing().stream().map(Mapper::mapUserToUserDto).toList());
     }
 }
