@@ -84,14 +84,7 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
-    public FollowersDTO getFollowers(Integer userId) {
-        List<User> followers = getFollowersAuxFunction(userId);
-        return Mapper.toFollowersDTO(userRepository.getUserById(userId).get(),followers);
-    }
-
-    @Override
     public FollowersDTO getFollowers(Integer userId, String orderBy) {
-
         List<User> followers = getFollowersAuxFunction(userId);
         followers = orderUserList(followers,orderBy);
         return Mapper.toFollowersDTO(userRepository.getUserById(userId).get(),followers);
