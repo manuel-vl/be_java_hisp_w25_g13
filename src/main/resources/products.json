@@ -1,0 +1,50 @@
+[
+  {
+    "product_id": 1,
+    "product_name": "Silla Gamer",
+    "type": "Gamer",
+    "brand": "Racer",
+    "color": "Red & Black",
+    "notes": "Special Edition"
+  },
+  {
+    "product_id": 2,
+    "product_name": "Teclado Gamer",
+    "type": "Gamer",
+    "brand": "Racer",
+    "color": "Black",
+    "notes": "Special Edition"
+  },
+  {
+    "product_id": 3,
+    "product_name": "Audifonos",
+    "type": "Audio",
+    "brand": "Sony",
+    "color": "Black",
+    "notes": "Linkbuds S"
+  },
+  {
+    "product_id": 4,
+    "product_name": "Silla",
+    "type": "Ergonomica",
+    "brand": "Femmto",
+    "color": "Black",
+    "notes": "Office Special"
+  },
+  {
+    "product_id": 5,
+    "product_name": "Ventilador",
+    "type": "Ventiladores",
+    "brand": "Plus Solution",
+    "color": "Black",
+    "notes": "With remote control"
+  },
+  {
+    "product_id": 6,
+    "product_name": "Televisor",
+    "type": "50",
+    "brand": "Samsung",
+    "color": "Black",
+    "notes": "Crystal UHD 4k"
+  }
+]
