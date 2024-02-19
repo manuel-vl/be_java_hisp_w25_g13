@@ -53,6 +53,35 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
+    public void unFollowUser(Integer userId, Integer userIdToUnfollow) {
+        Optional<User> optionalUser = userRepository.getUserById(userId);
+
+        if (optionalUser.isEmpty()) {
+            throw new NotFoundException("El id de este usuario no se encuentra registrado");
+        }
+
+        Optional<User> optionalUserToFollow = userRepository.getUserById(userIdToUnfollow);
+        if (optionalUserToFollow.isEmpty()) {
+            throw new NotFoundException("El id del vendedor a seguir no se encuentra registrado");
+        }
+
+        User userToFollow = optionalUserToFollow.get();
+        if (!(userToFollow instanceof Seller seller)) {
+            throw new NotFoundException("El id del vendedor a seguir no se encuentra registrado");
+        }
+
+        User user = optionalUser.get();
+
+        Optional<User> followerUser = seller.getFollowers().stream().filter(follower -> follower.equals(user)).findFirst();
+        if (followerUser.isEmpty()) {
+            throw new BadRequestException("El usuario no sigue al vendedor con ese id");
+        }
+
+        user.getFollowing().remove(seller);
+        seller.getFollowers().remove(user);
+    }
+
+    @Override
     public UserDTO addUser(UserDTO userDto) {
         return null;
     }
