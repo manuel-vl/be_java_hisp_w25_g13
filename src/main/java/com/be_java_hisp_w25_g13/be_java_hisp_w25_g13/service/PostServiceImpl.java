@@ -16,7 +16,7 @@ public class PostServiceImpl implements IPostService{
     public PostDTO addPost(PostDTO postDTO) {
         Post post=this.DTOToPost(postDTO);
         postRepository.addPost(post);
-        
+
         return postDTO;
     }
 
