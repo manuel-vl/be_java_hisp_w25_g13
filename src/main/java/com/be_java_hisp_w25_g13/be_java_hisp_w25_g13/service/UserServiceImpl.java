@@ -146,14 +146,15 @@ public class UserServiceImpl implements IUserService{
             throw new NotFoundException("El usuario no ha sido encontrado");
         }
         LocalDate hourNow = LocalDate.now();
-        List<?> w = user.get().getFollowing().stream().filter(x -> {
+        List<Post2DTO> response = new ArrayList<>();
+        user.get().getFollowing().stream().filter(x -> {
             if (postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow).isEmpty()){
                 return false;
             }
             return true;
-        }).map(x ->  postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow)
-                .stream().map(y -> Mapper.mapPostToPost2DTO(y))).toList();
-        return new SellerPostDTO(id, (List<Post2DTO>) w);
+        }).forEach(x ->  postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow)
+                .stream().forEach(y -> response.add(Mapper.mapPostToPost2DTO(y))));
+        return new SellerPostDTO(id, response);
 
     }
 
