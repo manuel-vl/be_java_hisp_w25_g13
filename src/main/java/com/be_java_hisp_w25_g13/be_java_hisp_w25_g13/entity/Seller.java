@@ -14,8 +14,7 @@ public class Seller extends User{
 
     public Seller(Integer userId, String userName){
         super(userId, userName);
-        this.Followers = new ArrayList<>();
     }
 
-    private List<User> Followers;
+    private List<User> Followers = new ArrayList<>();
 }
