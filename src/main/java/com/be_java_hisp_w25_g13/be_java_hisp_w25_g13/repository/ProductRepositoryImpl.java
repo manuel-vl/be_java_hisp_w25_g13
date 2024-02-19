@@ -11,10 +11,9 @@ public class ProductRepositoryImpl implements IProductRepository{
     List<Product> products=new ArrayList<>();
 
     @Override
-    public Product addProduct(Product product) {
+    public void addProduct(Product product) {
         products.add(product);
 
-        return product;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.PostDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Product;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IPostRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,15 @@ import java.util.List;
 public class PostServiceImpl implements IPostService{
     @Autowired
     IPostRepository postRepository;
+    @Autowired
+    ProductServiceImpl productService;
+
     @Override
     public PostDTO addPost(PostDTO postDTO) {
         Post post= Mapper.mapPostDtoToPost(postDTO);
+
         postRepository.addPost(post);
+        productService.addProduct(postDTO.getProduct());
 
         return postDTO;
     }
