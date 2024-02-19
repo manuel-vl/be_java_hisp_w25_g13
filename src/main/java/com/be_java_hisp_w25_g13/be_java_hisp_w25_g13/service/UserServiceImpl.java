@@ -162,7 +162,10 @@ public class UserServiceImpl implements IUserService{
         } else if (order.equals("date_desc")) {
             return new SellerPostDTO(id, OrderBy.orderByDateAsc(response).stream().map(y -> Mapper.mapPostToPost2DTO(y)).toList());
         }
-        return null;
+
+        throw new BadRequestException("El metodo de ordenamiento debe estar entre date_asc, date_desc o no tener");
+
+
 
     }
 
