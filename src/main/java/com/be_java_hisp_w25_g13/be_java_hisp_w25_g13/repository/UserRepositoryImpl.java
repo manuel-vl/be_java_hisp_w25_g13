@@ -3,9 +3,14 @@ package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UserRepositoryImpl implements IUserRepository{
+
+    List<User> users = new ArrayList<>();
+
     @Override
     public User addUser(User user) {
         return null;
@@ -17,12 +22,14 @@ public class UserRepositoryImpl implements IUserRepository{
     }
 
     @Override
-    public User getUserById(Integer userId) {
-        return null;
+    public Optional<User> getUserById(Integer userId) {
+        return users.stream()
+                .filter(user -> user.getUserId().equals(userId))
+                .findFirst();
     }
 
     @Override
-    public Seller getSellerById(Integer userId) {
+    public Optional<Seller> getSellerById(Integer userId) {
         return null;
     }
 }
