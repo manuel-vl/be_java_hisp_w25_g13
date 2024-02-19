@@ -1,10 +1,6 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
 
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowedDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowersDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.NumberDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.SellerPostDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.UserDTO;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.*;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
@@ -139,14 +135,15 @@ public class UserServiceImpl implements IUserService{
             throw new NotFoundException("El usuario no ha sido encontrado");
         }
         LocalDate hourNow = LocalDate.now();
-        user.get().getFollowing().stream().filter( x -> {
+        List<Post2DTO> w = user.get().getFollowing().stream().filter(x -> {
             if (postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow).isEmpty()){
                 return false;
             }
             return true;
-        }).map( x -> {
+        }).map(x -> (Post2DTO) postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow)
+                .stream().map(y -> Mapper.mapPostToPost2DTO(y))).toList();
+        return new SellerPostDTO(id, w);
 
-        })
     }
 
 

@@ -13,7 +13,7 @@ public class Post2DTO {
     private Integer user_id;
     private Integer post_id;
     private LocalDate date;
-    private Product product;
+    private ProductDTO product;
     private Integer category;
     private Double price;
 }

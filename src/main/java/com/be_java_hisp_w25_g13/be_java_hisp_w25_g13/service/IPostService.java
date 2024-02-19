@@ -8,5 +8,4 @@ public interface IPostService {
     PostDTO addPost(PostDTO postDTO);
     List<PostDTO> getPosts(Integer idUsuario);
 
-    Object getPostPerSeller(Integer id);
 }
