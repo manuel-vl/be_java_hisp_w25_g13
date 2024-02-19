@@ -90,11 +90,6 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
-    public FollowedDTO getFollowed(Integer userId, String orderBy) {
-        return null;
-    }
-
-    @Override
     public FollowersDTO getFollowers(Integer userId, String orderBy) {
 
         List<User> followers = getFollowersAuxFunction(userId);
@@ -127,17 +122,19 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
-    public FollowedDTO getFollowed(Integer userId){
+    public FollowedDTO getFollowed(Integer userId, String OrderBy){
         Optional<User> user = userRepository.getUserById(userId);
         if(user.isEmpty()){
             throw new NotFoundException("El id de este usuario no se encuentra registrado");
         }
         User foundUser = user.get();
 
+        List<User> followingList = orderUserList(foundUser.getFollowing().stream().map(s -> (User) s).toList(), OrderBy);
+
         return new FollowedDTO(
                 foundUser.getUserId(),
                 foundUser.getUserName(),
-                foundUser.getFollowing().stream().map(Mapper::mapUserToUserDto).toList());
+                followingList.stream().map(Mapper::mapUserToUserDto).toList());
     }
     private List<User> getFollowersAuxFunction(Integer userId){
         Optional<User> user = userRepository.getUserById(userId);
