@@ -11,6 +11,7 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.WrongDataException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IUserRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Mapper;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.OrderBy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -71,10 +72,10 @@ public class UserServiceImpl implements IUserService{
 
     @Override
     public FollowersDTO getFollowers(Integer userId, String orderBy) {
-        //TODO: agregar orden.
-        List<User> followers = getFollowersAuxFunction(userId);
-        return Mapper.toFollowersDTO(userRepository.getUserById(userId).get(),followers);
 
+        List<User> followers = getFollowersAuxFunction(userId);
+        followers = orderUserList(followers,orderBy);
+        return Mapper.toFollowersDTO(userRepository.getUserById(userId).get(),followers);
     }
 
     @Override
@@ -108,16 +109,11 @@ public class UserServiceImpl implements IUserService{
             throw new NotFoundException("El id de este usuario no se encuentra registrado");
         }
         User foundUser = user.get();
-        if(foundUser instanceof User){
-            throw new BadRequestException("El id proporcionado corresponde a un Usuario, un usuario no tiene seguidores");
-        }else{
-            Seller foundSeller = (Seller) foundUser;
-            return new FollowedDTO(
-                    foundUser.getUserId(),
-                    foundSeller.getUserName(),
-                    foundSeller.getFollowers().stream().map(Mapper::mapUserToUserDto).toList());
-        }
 
+        return new FollowedDTO(
+                foundUser.getUserId(),
+                foundUser.getUserName(),
+                foundUser.getFollowing().stream().map(Mapper::mapUserToUserDto).toList());
     }
     private List<User> getFollowersAuxFunction(Integer userId){
         Optional<User> user = userRepository.getUserById(userId);
@@ -128,6 +124,15 @@ public class UserServiceImpl implements IUserService{
             throw new BadRequestException("El id de este usuario no es el de un vendedor");
         }
         return ((Seller) user.get()).getFollowers();
+    }
+    private List<User> orderUserList(List<User> users, String orderBy){
+        if(orderBy.equalsIgnoreCase("asc")){
+            return OrderBy.orderByUserAsc(users);
+        }
+        if(orderBy.equalsIgnoreCase("desc")){
+            return OrderBy.orderByUserDes(users);
+        }
+        return users;
     }
 
 }
