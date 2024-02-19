@@ -33,9 +33,13 @@ public class UserController {
     public ResponseEntity<NumberDTO> getFollowersCount(@PathVariable Integer userId){
         return ResponseEntity.ok().body(userService.getNumberOfFollowers(userId));
     }
-    @GetMapping("/{userID}/followers/list")
+    @GetMapping("/{userID}/followers/list/order")
     public ResponseEntity<FollowersDTO> getFollowersList(@PathVariable Integer userID, @RequestParam(value = "order", defaultValue = "desc") String orderBy){
         return ResponseEntity.ok().body(userService.getFollowers(userID, orderBy));
+    }
+    @GetMapping("/{userID}/followers/list")
+    public ResponseEntity<FollowersDTO> getFollowersList(@PathVariable Integer userID) {
+        return ResponseEntity.ok().body(userService.getFollowers(userID));
     }
 
     @GetMapping("")
