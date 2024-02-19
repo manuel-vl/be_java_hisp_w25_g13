@@ -4,11 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class Seller extends User{
+
+    public Seller(Integer userId, String userName){
+        super(userId, userName);
+        this.Followers = new ArrayList<>();
+    }
+
     private List<User> Followers;
 }
