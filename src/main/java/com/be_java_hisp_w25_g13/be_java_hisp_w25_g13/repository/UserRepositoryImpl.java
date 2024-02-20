@@ -22,26 +22,6 @@ public class UserRepositoryImpl implements IUserRepository{
 
         this.users = loadUserDataBase();
         this.users.addAll(loadSellerDataBase());
-        this.users.add(new Seller(99,"prueba seller", Arrays.asList(
-                users.get(0),
-                users.get(1),
-                users.get(2)
-        )));
-        this.users.add(new Seller(100,"John Travolta", Arrays.asList(
-                users.get(13),
-                users.get(12),
-                users.get(14)
-        )));
-        this.users.add(new Seller(101,"Leo Messi", Arrays.asList(
-                users.get(8),
-                users.get(9),
-                users.get(10)
-        )));
-        this.users.add(new Seller(102,"Neymar Jr", Arrays.asList(
-                users.get(8),
-                users.get(9),
-                users.get(10)
-        )));
     }
 
     @Override

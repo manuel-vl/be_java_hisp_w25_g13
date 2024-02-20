@@ -1,6 +1,7 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.controller;
 
 
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.SellerPostDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service.IPostService;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.PostDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.ProductDTO;
@@ -24,18 +25,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
     @Autowired
     ProductServiceImpl productService;
+    @Autowired
     IPostService postService;
     @Autowired
     IUserService userService;
+
     @GetMapping("followed/{userId}/list")
-    public ResponseEntity<?> publiProdSeller(@PathVariable Integer userId, @RequestParam(defaultValue = "none") String order ){
+    public ResponseEntity<SellerPostDTO> getPostPerSeller(@PathVariable Integer userId, @RequestParam(defaultValue = "none") String order ){
         return new ResponseEntity<>(userService.getPostPerSeller(userId, order), HttpStatus.OK);
     }
     @PostMapping("/post")
     public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO){
         return new ResponseEntity<>(postService.addPost(postDTO), HttpStatus.OK);
     }
-    @GetMapping("/post")
+    @GetMapping("")
     public ResponseEntity<List<ProductDTO>> listProducts(){
         return new ResponseEntity<>(productService.getProducts(), HttpStatus.OK);
     }

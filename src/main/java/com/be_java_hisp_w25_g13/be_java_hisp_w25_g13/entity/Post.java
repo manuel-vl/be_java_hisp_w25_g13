@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 public class Post {
-    static Integer numPost = 0;
     Integer userId;
     Integer postId;
     LocalDate date;
@@ -19,8 +18,7 @@ public class Post {
     Double price;
 
     public Post(Integer user_id, LocalDate date, Product product, Integer category, Double price){
-        numPost += 1;
-        this.postId = numPost;
+        this.postId = -1;
         this.userId = user_id;
         this.date = date;
         this.product = product;
