@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Mapper {
-    static ObjectMapper mapper = new ObjectMapper();
-
     public static ProductDTO mapProductToProductDTO(Product product){
         return new ProductDTO(product.getProductId(),product.getProductName(), product.getType(),product.getBrand(),product.getColor(), product.getNotes());
     }

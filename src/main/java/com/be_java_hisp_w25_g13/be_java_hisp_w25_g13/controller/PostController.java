@@ -31,8 +31,9 @@ public class PostController {
     IUserService userService;
 
     @GetMapping("followed/{userId}/list")
-    public ResponseEntity<SellerPostDTO> getPostPerSeller(@PathVariable Integer userId, @RequestParam(defaultValue = "none") String order ){
-        return new ResponseEntity<>(userService.getPostPerSeller(userId, order), HttpStatus.OK);
+    public ResponseEntity<SellerPostDTO> getPostPerSeller(
+        @PathVariable Integer userId, @RequestParam(defaultValue = "none") String order){
+            return new ResponseEntity<>(userService.getPostPerSeller(userId, order), HttpStatus.OK);
     }
     @PostMapping("/post")
     public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO){
