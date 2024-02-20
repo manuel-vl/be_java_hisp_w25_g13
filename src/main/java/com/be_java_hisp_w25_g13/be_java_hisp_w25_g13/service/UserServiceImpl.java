@@ -9,7 +9,6 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IPostRepository;
 
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.WrongDataException;
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IUserRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Mapper;
@@ -62,12 +61,13 @@ public class UserServiceImpl implements IUserService{
         if (optionalUserToFollow.isEmpty()) {
             throw new NotFoundException("El id del vendedor no se encuentra registrado");
         }
-        User userToFollow = optionalUserToFollow.get();
-        if (!(userToFollow instanceof Seller seller)) {
+        User userToUnfollow = optionalUserToFollow.get();
+        if (!(userToUnfollow instanceof Seller seller)) {
             throw new NotFoundException("El id del usuario no corresponde al de un vendedor");
         }
         User user = optionalUser.get();
-        if (seller.getFollowers().stream().anyMatch(follower -> follower.equals(user))) {
+        seller.getFollowers().forEach(f -> System.out.println(f.getUserId()));
+        if (seller.getFollowers().stream().filter(follower -> follower.getUserId().equals(user.getUserId())).toList().isEmpty()) {
             throw new BadRequestException("El usuario no sigue al vendedor con ese id");
         }
         user.getFollowing().remove(seller);
@@ -111,32 +111,18 @@ public class UserServiceImpl implements IUserService{
                 followingList.stream().map(Mapper::mapUserToUserDto).toList());
     }
     @Override
-    public SellerPostDTO getPostPerSeller(Integer id, String order) {
+    public SellerPostDTO getPostPerSeller(Integer id, String orderBy) {
         Optional<User> user = userRepository.getUserById(id);
-        if (!user.isPresent()){
+        if (user.isEmpty()){
             throw new NotFoundException("El usuario no ha sido encontrado");
         }
         LocalDate hourNow = LocalDate.now();
-        List<Post> response = new ArrayList<>();
-         user.get().getFollowing().stream().filter(x -> {
-            if (postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow).isEmpty()){
-                return false;
-            }
-            return true;
-        }).forEach(x ->  postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow).forEach(y -> response.add(y)));
+        List<Post> posts = new ArrayList<>();
+         user.get().getFollowing().stream()
+                 .filter(x -> !(postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow).isEmpty()))
+                 .forEach(x -> posts.addAll(postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow)));
 
-        if (order.equals("none")) {
-            return new SellerPostDTO(id, response.stream().map(y -> Mapper.mapPostToPost2DTO(y)).toList());
-        } else if (order.equals("date_asc")){
-            return new SellerPostDTO(id, OrderBy.orderByDateAsc(response).stream().map(y -> Mapper.mapPostToPost2DTO(y)).toList());
-        } else if (order.equals("date_desc")) {
-            return new SellerPostDTO(id, OrderBy.orderByDateAsc(response).stream().map(y -> Mapper.mapPostToPost2DTO(y)).toList());
-        }
-
-        throw new BadRequestException("El metodo de ordenamiento debe estar entre date_asc, date_desc o no tener ninguno");
-
-
-
+        return new SellerPostDTO(id, orderPostList(posts, orderBy).stream().map(Mapper::mapPostToPost2DTO).toList());
     }
     private List<User> getFollowersAuxFunction(Integer userId){
         Optional<User> user = userRepository.getUserById(userId);
@@ -148,15 +134,25 @@ public class UserServiceImpl implements IUserService{
         }
         return ((Seller) user.get()).getFollowers();
     }
-    private List<User> orderUserList(List<User> users, String orderBy){
-        if(orderBy.equalsIgnoreCase("asc")){
-            return OrderBy.orderByUserAsc(users);
-        }
-        if(orderBy.equalsIgnoreCase("desc")){
-            return OrderBy.orderByUserDes(users);
-        }
-        return users;
+
+    private List<Post> orderPostList(List<Post> posts, String orderBy){
+
+        return switch (orderBy) {
+            case "date_asc" -> OrderBy.orderByDateAsc(posts);
+            case "date_desc" -> OrderBy.orderByDateDes(posts);
+            case "none" -> posts;
+            default ->
+                    throw new BadRequestException("El metodo de ordenamiento debe estar entre date_asc, date_desc o no tener ninguno");
+        };
     }
 
-
+    private List<User> orderUserList(List<User> users, String orderBy){
+        return switch (orderBy){
+            case "name_asc" -> OrderBy.orderByUserAsc(users);
+            case "name_desc" -> OrderBy.orderByUserDes(users);
+            case "none" -> users;
+            default ->
+                    throw new BadRequestException("El metodo de ordenamiento debe estar entre name_asc, name_desc o no tener ninguno");
+        };
+    }
 }
