@@ -31,8 +31,6 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public Optional<Product> getProductById(Integer id) {
-        Optional<Product> product= productRepository.getProductById(id);
-
-        return product;
+      return productRepository.getProductById(id);
     }
 }

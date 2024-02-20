@@ -5,7 +5,9 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Product;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.AlreadyExistException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IPostRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IUserRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Mapper;
@@ -33,13 +35,13 @@ public class PostServiceImpl implements IPostService{
         Optional<User> user = userRepository.getUserById(postDTO.getUserId());
 
         if(user.isEmpty()){
-            throw new BadRequestException("No hay un usuario con el id especificado");
+            throw new NotFoundException("No hay un usuario con el id especificado");
         }
         if((!(user.get() instanceof Seller))){
             throw new BadRequestException("El usuario no corresponde a un vendedor");
         }
         if(product.isPresent()){
-            throw new BadRequestException("Ya existe un post para este producto");
+            throw new AlreadyExistException("Ya existe un post para este producto");
         }
 
         postRepository.addPost(post);

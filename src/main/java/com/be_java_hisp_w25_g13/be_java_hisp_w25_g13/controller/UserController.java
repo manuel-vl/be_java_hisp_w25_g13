@@ -38,15 +38,17 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getNumberOfFollowers(userId));
     }
     @GetMapping("/{userID}/followers/list")
-    public ResponseEntity<FollowersDTO> getFollowersList(@PathVariable Integer userID, @RequestParam(defaultValue = "none") String orderBy){
-        return ResponseEntity.ok().body(userService.getFollowers(userID, orderBy));
+    public ResponseEntity<FollowersDTO> getFollowersList(
+        @PathVariable Integer userID, @RequestParam(defaultValue = "none") String order){
+            return ResponseEntity.ok().body(userService.getFollowers(userID, order));
     }
     @GetMapping("")
     public ResponseEntity<List<UserDTO>> getAllUsers(){
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
     @GetMapping("/{userId}/followed/list")
-    public ResponseEntity<FollowedDTO> getFollowed(@PathVariable Integer userId, @RequestParam(defaultValue = "none") String orderBy){
-        return new ResponseEntity<>(userService.getFollowed(userId, orderBy), HttpStatus.OK);
+    public ResponseEntity<FollowedDTO> getFollowed(
+        @PathVariable Integer userId, @RequestParam(defaultValue = "none") String order){
+            return new ResponseEntity<>(userService.getFollowed(userId, order), HttpStatus.OK);
     }
 }
