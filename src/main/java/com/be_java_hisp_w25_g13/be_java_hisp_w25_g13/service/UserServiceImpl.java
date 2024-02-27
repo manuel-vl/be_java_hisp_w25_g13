@@ -109,6 +109,9 @@ public class UserServiceImpl implements IUserService{
 
         List<User> followingList = orderUserList(foundUser.getFollowing().stream()
             .map(s -> (User) s).toList(), OrderBy);
+        if (followingList.isEmpty()) {
+            throw new NotFoundException("El usuario no sigue a ningun vendedor");
+        }
 
         return new FollowedDTO(
                 foundUser.getUserId(),
@@ -123,9 +126,13 @@ public class UserServiceImpl implements IUserService{
         }
         LocalDate hourNow = LocalDate.now();
         List<Post> posts = new ArrayList<>();
-         user.get().getFollowing().stream()
+        user.get().getFollowing().stream()
                  .filter(x -> !(postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow).isEmpty()))
                  .forEach(x -> posts.addAll(postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow)));
+
+        if (posts.isEmpty()) {
+            throw new NotFoundException("Ninguno de los seguidos de este usuario ha realizado publicaciones");
+        }
 
         return new SellerPostDTO(id, orderPostList(posts, orderBy).stream().map(Mapper::mapPostToPost2DTO).toList());
     }
@@ -137,7 +144,11 @@ public class UserServiceImpl implements IUserService{
         if(!(user.get() instanceof Seller)){
             throw new BadRequestException("El id del usuario no corresponde al de un vendedor");
         }
-        return ((Seller) user.get()).getFollowers();
+        List<User> followers = ((Seller) user.get()).getFollowers();
+        if (followers.isEmpty()) {
+            throw new NotFoundException("El usuario no tiene seguidores");
+        }
+        return followers;
     }
     private List<Post> orderPostList(List<Post> posts, String orderBy){
 
