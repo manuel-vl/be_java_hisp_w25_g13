@@ -1,5 +1,6 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
 
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowedDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowersDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
@@ -183,6 +184,85 @@ class UserServiceImplTest {
 
         //Act & Assert
         assertThrows(NotFoundException.class,() -> userService.getFollowed(1, orderBy));
+    }
+    @DisplayName("T-04 FollowerListAscOk")
+    @Test
+    void getFollowersAsc(){
+        //Arrange
+        Seller seller = Utilities.generateSeller3Followed(1, "Pepe");
+        String orderBy = "name_asc";
+        FollowersDTO expectedFollowers = Utilities.generateFollowersDTOAsc(seller.getUserId(), seller.getUserName());
+        when(userRepository.getUserById(seller.getUserId())).thenReturn(Optional.of(seller));
+        //Act
+        FollowersDTO followersDTO = userService.getFollowers(seller.getUserId(), orderBy);
+        //Assert
+        assertThat(followersDTO).usingRecursiveComparison().isEqualTo(expectedFollowers);
+    }
+    @DisplayName("T-04 FollowerListDescOk")
+    @Test
+    void getFollowersDesc(){
+        //Arrange
+        Seller seller = Utilities.generateSeller3Followed(1, "Pepe");
+        String orderBy = "name_desc";
+        FollowersDTO expectedFollowers = Utilities.generateFollowersDTODesc(seller.getUserId(), seller.getUserName());
+        when(userRepository.getUserById(seller.getUserId())).thenReturn(Optional.of(seller));
+        //Act
+        FollowersDTO followersDTO = userService.getFollowers(seller.getUserId(), orderBy);
+        //Assert
+        assertThat(followersDTO).usingRecursiveComparison().isEqualTo(expectedFollowers);
+    }
+    @DisplayName("T-04 FollowerListNotOk")
+    @Test
+    void getFollowersNotOk(){
+        //Arrange
+        Seller seller = Utilities.generateSeller3Followed(1, "Pepe");
+        String orderBy = "name_asc";
+        FollowersDTO expectedFollowers = Utilities.generateFollowersDTODesc(seller.getUserId(), seller.getUserName());
+        when(userRepository.getUserById(seller.getUserId())).thenReturn(Optional.of(seller));
+        //Act
+        FollowersDTO followersDTO = userService.getFollowers(seller.getUserId(), orderBy);
+        //Assert
+        assertThat(followersDTO).usingRecursiveComparison().isNotEqualTo(expectedFollowers);
+    }
+    @DisplayName("T-04 FollowedListAscOk")
+    @Test
+    void getFollowedAsc(){
+        //Arrange
+        User user = Utilities.generateUser3Following(1, "Pepe");
+        String orderBy = "name_asc";
+        FollowedDTO expectedFollowed = Utilities.generateFollowedDTOAsc(user.getUserId(), user.getUserName());
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        //Act
+        FollowedDTO followedDTO = userService.getFollowed(user.getUserId(), orderBy);
+        //Assert
+        assertThat(followedDTO).usingRecursiveComparison().isEqualTo(expectedFollowed);
+    }
+    @DisplayName("T-04 FollowedListDescOk")
+    @Test
+    void getFollowedDesc(){
+        //Arrange
+        User user = Utilities.generateUser3Following(1, "Pepe");
+        String orderBy = "name_desc";
+        FollowedDTO expectedFollowed = Utilities.generateFollowedDTODesc(user.getUserId(), user.getUserName());
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        //Act
+        FollowedDTO followedDTO = userService.getFollowed(user.getUserId(), orderBy);
+        //Assert
+        assertThat(followedDTO).usingRecursiveComparison().isEqualTo(expectedFollowed);
+    }
+
+    @DisplayName("T-04 FollowedListNotOk")
+    @Test
+    void getFollowedNotOk(){
+        //Arrange
+        User user = Utilities.generateUser3Following(1, "Pepe");
+        String orderBy = "name_asc";
+        FollowedDTO expectedFollowed = Utilities.generateFollowedDTODesc(user.getUserId(), user.getUserName());
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        //Act
+        FollowedDTO followedDTO = userService.getFollowed(user.getUserId(), orderBy);
+        //Assert
+        assertThat(followedDTO).usingRecursiveComparison().isNotEqualTo(expectedFollowed);
     }
     @Test
     void unFollowUserOK(){

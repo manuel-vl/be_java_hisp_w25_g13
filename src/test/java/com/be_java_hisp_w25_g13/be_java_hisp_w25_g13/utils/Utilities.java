@@ -1,5 +1,7 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils;
 
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowedDTO;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowersDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.UserDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Product;
@@ -38,11 +40,39 @@ public class Utilities {
         users.add(generateUser(6,"Manuel"));
         return users;
     }
+    public static List<UserDTO> generateListUserToUsersDtoAsc() {
+        List<UserDTO> users = new ArrayList<>();
+        users.add(generateUserDTO(4,"Daniela"));
+        users.add(generateUserDTO(6,"Manuel"));
+        users.add(generateUserDTO(5,"Sebastian"));
+        return users;
+    }
+    public static List<UserDTO> generateListUserToUsersDtoDesc() {
+        List<UserDTO> users = new ArrayList<>();
+        users.add(generateUserDTO(5,"Sebastian"));
+        users.add(generateUserDTO(6,"Manuel"));
+        users.add(generateUserDTO(4,"Daniela"));
+        return users;
+    }
     public static List<Seller>  generateListSellers(){
         List<Seller> sellers = new ArrayList<>();
         sellers.add(generateSeller(1, "Juan Manuel", Collections.emptyList()));
         sellers.add(generateSeller(2, "Julian", Collections.emptyList()));
         sellers.add(generateSeller(3, "Felipe", Collections.emptyList()));
+        return sellers;
+    }
+    public static List<UserDTO>  generateListSellerToUserDtoAsc(){
+        List<UserDTO> sellers = new ArrayList<>();
+        sellers.add(generateUserDTO(3, "Felipe"));
+        sellers.add(generateUserDTO(1, "Juan Manuel"));
+        sellers.add(generateUserDTO(2, "Julian"));
+        return sellers;
+    }
+    public static List<UserDTO>  generateListSellerToUserDtoDesc(){
+        List<UserDTO> sellers = new ArrayList<>();
+        sellers.add(generateUserDTO(2, "Julian"));
+        sellers.add(generateUserDTO(1, "Juan Manuel"));
+        sellers.add(generateUserDTO(3, "Felipe"));
         return sellers;
     }
     public static Seller generateSeller3Followed(Integer id, String name){
@@ -67,5 +97,35 @@ public class Utilities {
         listPost.add(generatePost(5,6, LocalDate.parse("2024-2-25"),7,"Impresora"));
         listPost.add(generatePost(6,7, LocalDate.parse("2024-2-25"),8,"Monitor"));
         return listPost;
+    }
+
+    public static FollowersDTO generateFollowersDTOAsc(Integer sellerId, String name){
+        return new FollowersDTO(
+                sellerId,
+                name,
+                generateListUserToUsersDtoAsc()
+        );
+    }
+
+    public static FollowersDTO generateFollowersDTODesc(Integer sellerId, String name){
+        return new FollowersDTO(
+                sellerId,
+                name,
+                generateListUserToUsersDtoDesc()
+        );
+    }
+    public static FollowedDTO generateFollowedDTOAsc(Integer sellerId, String name){
+        return new FollowedDTO(
+                sellerId,
+                name,
+                generateListSellerToUserDtoAsc()
+        );
+    }
+    public static FollowedDTO generateFollowedDTODesc(Integer sellerId, String name){
+        return new FollowedDTO(
+                sellerId,
+                name,
+                generateListSellerToUserDtoDesc()
+        );
     }
 }
