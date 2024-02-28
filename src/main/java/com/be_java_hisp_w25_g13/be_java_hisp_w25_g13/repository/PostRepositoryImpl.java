@@ -20,15 +20,10 @@ public class PostRepositoryImpl implements IPostRepository{
         return post;
     }
     @Override
-    public List<Post> filterByDateAndIdUsuario(Integer idUsuario, LocalDate date) {
-        return posts.stream().filter(x -> {
-            int dayAct = date.getDayOfMonth();
-            int monthAct = date.getMonthValue();
-            int yearAct = date.getYear();
-            int dayIter = x.getDate().getDayOfMonth();
-            int monthIter = x.getDate().getMonthValue();
-            int yearIter = x.getDate().getYear();
-            return (x.getUserId().equals(idUsuario) && yearIter <= yearAct && monthIter == monthAct && dayAct-dayIter <= 14);
-        }).toList();
+    public List<Post> filterByUserIdAndDate(Integer userId, LocalDate initDate, LocalDate endDate) {
+        return posts.stream().
+            filter(post -> (post.getDate().isAfter(initDate) || post.getDate().isEqual(initDate))
+                && (post.getDate().isBefore(endDate) || post.getDate().isEqual(endDate)))
+            .toList();
     }
 }
