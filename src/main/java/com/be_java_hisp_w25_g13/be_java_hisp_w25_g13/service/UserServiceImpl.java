@@ -1,14 +1,10 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.*;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
-
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IPostRepository;
-
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IUserRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Mapper;
@@ -27,8 +23,6 @@ import java.util.Optional;
 public class UserServiceImpl implements IUserService{
     @Autowired
     IUserRepository userRepository;
-    @Autowired
-    IPostRepository postRepository;
     @Override
     public void followUser(Integer userId, Integer userIdToFollow) {
         if (userId.equals(userIdToFollow)) {

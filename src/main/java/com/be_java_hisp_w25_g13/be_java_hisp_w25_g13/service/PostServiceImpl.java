@@ -53,17 +53,28 @@ public class PostServiceImpl implements IPostService{
 
         return postDTO;
     }
+
+    @Override
+    public List<PostDTO> getPosts(Integer idUsuario) {
+        return null;
+    }
+
     @Override
     public SellerPostDTO getPostPerSeller(Integer id, String orderBy) {
         Optional<User> user = userRepository.getUserById(id);
         if (user.isEmpty()){
             throw new NotFoundException("El id de este usuario no se encuentra registrado");
         }
-        LocalDate hourNow = LocalDate.now();
+        LocalDate actualDate = LocalDate.now();
         List<Post> posts = new ArrayList<>();
-        user.get().getFollowing().stream()
-                .filter(x -> !(postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow).isEmpty()))
-                .forEach(x -> posts.addAll(postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow)));
+        for (Seller seller:user.get().getFollowing()) {
+            List<Post> postBySeller = postRepository
+                .filterByUserIdAndDate(seller.getUserId(), actualDate.minusDays(14), actualDate);
+
+            if (!postBySeller.isEmpty()) {
+                posts.addAll(postBySeller);
+            }
+        }
 
         if (posts.isEmpty()) {
             throw new NotFoundException("Ninguno de los seguidos de este usuario ha realizado publicaciones");
@@ -71,7 +82,6 @@ public class PostServiceImpl implements IPostService{
 
         return new SellerPostDTO(id, orderPostList(posts, orderBy).stream().map(Mapper::mapPostToPost2DTO).toList());
     }
-
     public List<Post> orderPostList(List<Post> posts, String orderBy){
 
         return switch (orderBy) {
@@ -79,14 +89,9 @@ public class PostServiceImpl implements IPostService{
             case "date_desc" -> OrderBy.orderByDateDes(posts);
             case "none" -> posts;
             default ->
-                    throw new BadRequestException(
-                            "El metodo de ordenamiento debe estar entre date_asc, date_desc o no tener ninguno"
-                    );
+                throw new BadRequestException(
+                    "El metodo de ordenamiento debe estar entre date_asc, date_desc o no tener ninguno"
+                );
         };
-    }
-
-    @Override
-    public List<PostDTO> getPosts(Integer idUsuario) {
-        return null;
     }
 }

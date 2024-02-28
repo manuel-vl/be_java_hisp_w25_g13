@@ -1,6 +1,5 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
 
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.PostDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.SellerPostDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
@@ -8,16 +7,15 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IPostRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IUserRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities;
-import org.assertj.core.api.Assert;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.assertj.core.api.Assertions;
+
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -50,8 +48,7 @@ class PostServiceImplTest {
         User userExpected = new User(5,"Sebastian",List.of(sellerExpected));
 
         Mockito.when(userRepository.getUserById(5)).thenReturn(Optional.of(userExpected));
-        Mockito.when(postRepository.filterByDateAndIdUsuario(2, hourNow))
-                .thenReturn(listPostExpected);
+        //Mockito.when(postRepository.filterByUserIdAndDate(2, hourNow)).thenReturn(listPostExpected);
 
         SellerPostDTO resultDTO = postService.getPostPerSeller(userExpected.getUserId(), "date_asc");
 
