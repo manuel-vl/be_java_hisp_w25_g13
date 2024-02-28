@@ -118,24 +118,6 @@ public class UserServiceImpl implements IUserService{
                 foundUser.getUserName(),
                 followingList.stream().map(Mapper::mapUserToUserDto).toList());
     }
-    @Override
-    public SellerPostDTO getPostPerSeller(Integer id, String orderBy) {
-        Optional<User> user = userRepository.getUserById(id);
-        if (user.isEmpty()){
-            throw new NotFoundException("El id de este usuario no se encuentra registrado");
-        }
-        LocalDate hourNow = LocalDate.now();
-        List<Post> posts = new ArrayList<>();
-        user.get().getFollowing().stream()
-                 .filter(x -> !(postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow).isEmpty()))
-                 .forEach(x -> posts.addAll(postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow)));
-
-        if (posts.isEmpty()) {
-            throw new NotFoundException("Ninguno de los seguidos de este usuario ha realizado publicaciones");
-        }
-
-        return new SellerPostDTO(id, orderPostList(posts, orderBy).stream().map(Mapper::mapPostToPost2DTO).toList());
-    }
     private List<User> getFollowersAuxFunction(Integer userId){
         Optional<User> user = userRepository.getUserById(userId);
         if(user.isEmpty()){
@@ -149,18 +131,6 @@ public class UserServiceImpl implements IUserService{
             throw new NotFoundException("El usuario no tiene seguidores");
         }
         return followers;
-    }
-    private List<Post> orderPostList(List<Post> posts, String orderBy){
-
-        return switch (orderBy) {
-            case "date_asc" -> OrderBy.orderByDateAsc(posts);
-            case "date_desc" -> OrderBy.orderByDateDes(posts);
-            case "none" -> posts;
-            default ->
-                    throw new BadRequestException(
-                        "El metodo de ordenamiento debe estar entre date_asc, date_desc o no tener ninguno"
-                    );
-        };
     }
     private List<User> orderUserList(List<User> users, String orderBy){
         return switch (orderBy){

@@ -1,6 +1,7 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.PostDTO;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.SellerPostDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Product;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
@@ -11,10 +12,13 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IPostRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IUserRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Mapper;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.OrderBy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +52,37 @@ public class PostServiceImpl implements IPostService{
         productService.addProduct(postDTO.getProduct());
 
         return postDTO;
+    }
+    @Override
+    public SellerPostDTO getPostPerSeller(Integer id, String orderBy) {
+        Optional<User> user = userRepository.getUserById(id);
+        if (user.isEmpty()){
+            throw new NotFoundException("El id de este usuario no se encuentra registrado");
+        }
+        LocalDate hourNow = LocalDate.now();
+        List<Post> posts = new ArrayList<>();
+        user.get().getFollowing().stream()
+                .filter(x -> !(postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow).isEmpty()))
+                .forEach(x -> posts.addAll(postRepository.filterByDateAndIdUsuario(x.getUserId(), hourNow)));
+
+        if (posts.isEmpty()) {
+            throw new NotFoundException("Ninguno de los seguidos de este usuario ha realizado publicaciones");
+        }
+
+        return new SellerPostDTO(id, orderPostList(posts, orderBy).stream().map(Mapper::mapPostToPost2DTO).toList());
+    }
+
+    public List<Post> orderPostList(List<Post> posts, String orderBy){
+
+        return switch (orderBy) {
+            case "date_asc" -> OrderBy.orderByDateAsc(posts);
+            case "date_desc" -> OrderBy.orderByDateDes(posts);
+            case "none" -> posts;
+            default ->
+                    throw new BadRequestException(
+                            "El metodo de ordenamiento debe estar entre date_asc, date_desc o no tener ninguno"
+                    );
+        };
     }
 
     @Override

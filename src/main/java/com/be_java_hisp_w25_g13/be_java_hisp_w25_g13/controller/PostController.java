@@ -33,7 +33,7 @@ public class PostController {
     @GetMapping("followed/{userId}/list")
     public ResponseEntity<SellerPostDTO> getPostPerSeller(
         @PathVariable Integer userId, @RequestParam(defaultValue = "none") String order){
-            return new ResponseEntity<>(userService.getPostPerSeller(userId, order), HttpStatus.OK);
+            return new ResponseEntity<>(postService.getPostPerSeller(userId, order), HttpStatus.OK);
     }
     @PostMapping("/post")
     public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO){
