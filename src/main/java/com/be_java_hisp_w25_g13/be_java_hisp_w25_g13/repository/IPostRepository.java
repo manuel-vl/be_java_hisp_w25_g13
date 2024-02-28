@@ -8,6 +8,6 @@ import java.util.List;
 public interface IPostRepository {
 
     Post addPost(Post post);
-    List<Post> filterByDateAndIdUsuario(Integer idUsuario, LocalDate date);
+    List<Post> filterByUserIdAndDate(Integer userId, LocalDate initDate, LocalDate endDate);
 
 }
