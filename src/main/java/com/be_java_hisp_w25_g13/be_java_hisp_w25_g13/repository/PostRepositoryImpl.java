@@ -20,7 +20,7 @@ public class PostRepositoryImpl implements IPostRepository{
         return post;
     }
     @Override
-    public List<Post> filterByUserIdAndDate(Integer userId, LocalDate initDate, LocalDate endDate) {
+    public List<Post> filterByUserIdAndBetweenDate(Integer userId, LocalDate initDate, LocalDate endDate) {
         return posts.stream().
             filter(post -> (post.getDate().isAfter(initDate) || post.getDate().isEqual(initDate))
                 && (post.getDate().isBefore(endDate) || post.getDate().isEqual(endDate)))
