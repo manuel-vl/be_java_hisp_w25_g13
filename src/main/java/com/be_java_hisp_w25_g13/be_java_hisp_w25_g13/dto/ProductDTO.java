@@ -7,6 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@Data
 public class ProductDTO {
     @NotNull(message = "El  id no puede estar vacío")
     @Positive(message = "El id debe ser mayor a cero")
