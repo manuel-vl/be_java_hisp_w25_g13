@@ -11,6 +11,7 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestExcepti
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IPostRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IUserRepository;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Constants;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Mapper;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.OrderBy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +40,13 @@ public class PostServiceImpl implements IPostService{
         Optional<User> user = userRepository.getUserById(postDTO.getUserId());
 
         if(user.isEmpty()){
-            throw new NotFoundException("No hay un usuario con el id especificado");
+            throw new NotFoundException(Constants.USER_NOT_FOUND_ERROR_MESSAGE);
         }
         if((!(user.get() instanceof Seller))){
-            throw new BadRequestException("El usuario no corresponde a un vendedor");
+            throw new BadRequestException(Constants.USER_IS_NOT_SELLER_ERROR_MESSAGE);
         }
         if(product.isPresent()){
-            throw new AlreadyExistException("Ya existe un post para este producto");
+            throw new AlreadyExistException(Constants.PRODUCT_ALREADY_HAVE_POST_ERROR_MESSAGE);
         }
 
         postRepository.addPost(post);
@@ -63,7 +64,7 @@ public class PostServiceImpl implements IPostService{
     public SellerPostDTO getPostPerSeller(Integer id, String orderBy) {
         Optional<User> user = userRepository.getUserById(id);
         if (user.isEmpty()){
-            throw new NotFoundException("El id de este usuario no se encuentra registrado");
+            throw new NotFoundException(Constants.USER_NOT_FOUND_ERROR_MESSAGE);
         }
         LocalDate actualDate = LocalDate.now();
         List<Post> posts = new ArrayList<>();
@@ -77,7 +78,7 @@ public class PostServiceImpl implements IPostService{
         }
 
         if (posts.isEmpty()) {
-            throw new NotFoundException("Ninguno de los seguidos de este usuario ha realizado publicaciones");
+            throw new NotFoundException(Constants.FOLLOWED_DONT_HAVE_POSTS_ERROR_MESSAGE);
         }
 
         return new SellerPostDTO(id, orderPostList(posts, orderBy).stream().map(Mapper::mapPostToPost2DTO).toList());
@@ -85,12 +86,12 @@ public class PostServiceImpl implements IPostService{
     public List<Post> orderPostList(List<Post> posts, String orderBy){
 
         return switch (orderBy) {
-            case "date_asc" -> OrderBy.orderByDateAsc(posts);
-            case "date_desc" -> OrderBy.orderByDateDes(posts);
-            case "none" -> posts;
+            case Constants.ORDER_DATE_ASC -> OrderBy.orderByDateAsc(posts);
+            case Constants.ORDER_DATE_DESC -> OrderBy.orderByDateDes(posts);
+            case Constants.NOT_ORDER -> posts;
             default ->
                 throw new BadRequestException(
-                    "El metodo de ordenamiento debe estar entre date_asc, date_desc o no tener ninguno"
+                    Constants.BAD_DATE_ORDER_TYPE_ERROR_MESSAGE
                 );
         };
     }
