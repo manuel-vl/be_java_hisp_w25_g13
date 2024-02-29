@@ -1,57 +1,41 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
 
-
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.UserRepositoryImpl;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities;
-import com.fasterxml.jackson.databind.deser.std.ObjectArrayDeserializer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestTemplate;
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowedDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowersDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.ExceptionDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.NumberDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.PostRepositoryImpl;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.UserRepositoryImpl;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 import java.util.ArrayList;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 import java.util.List;
 
 import static com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 

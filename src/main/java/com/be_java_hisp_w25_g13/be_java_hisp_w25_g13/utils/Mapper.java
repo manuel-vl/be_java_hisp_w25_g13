@@ -33,9 +33,6 @@ public class Mapper {
     public static Post mapPostDtoToPost(PostDTO postDTO){
         return new Post(postDTO.getUserId(), postDTO.getDate(), mapProductDtoToProduct(postDTO.getProduct()), postDTO.getCategory(), postDTO.getPrice());
     }
-    public static ProductDTO mapProductToProductDto(Product product){
-        return new ProductDTO(product.getProductId(), product.getBrand(), product.getType(), product.getProductName(), product.getColor(), product.getNotes());
-    }
   
     public static FollowersDTO toFollowersDTO(User user, List<User> users) {
         List<UserDTO> userDTOS = new ArrayList<>();
