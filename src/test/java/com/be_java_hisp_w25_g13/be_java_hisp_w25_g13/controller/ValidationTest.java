@@ -4,6 +4,7 @@ package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.controller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.PostDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.ProductDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,6 +28,7 @@ public class ValidationTest {
     private MockMvc mockMvc;
 
     @Test
+    @DisplayName("validate NotPositiveUserId")
     void createPostNotPositiveUserId() throws Exception{
         PostDTO postDto = new PostDTO(0, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "Comida", "Quesudas", "Rosa", "ifiefbeifb"),
@@ -41,6 +43,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("userId: El id debe ser mayor a cero"));
     }
     @Test
+    @DisplayName("validate NullDate")
     void createPostNullDate() throws Exception{
         PostDTO postDto = new PostDTO(1, null,
                 new ProductDTO(1,"Arepa", "Comida", "Quesudas", "Rosa", "ifiefbeifb"),
@@ -53,6 +56,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("date: La fecha no puede estar vacía"));
     }
     @Test
+    @DisplayName("validate NullCategory")
     void createPostNullCategory() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "Comida", "Quesudas", "Rosa", "ifiefbeifb"),
@@ -65,6 +69,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("category: El campo no puede estar vacío"));
     }
     @Test
+    @DisplayName("validate NullPrice")
     void createPostNullPrice() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "Comida", "Quesudas", "Rosa", "ifiefbeifb"),
@@ -77,6 +82,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("price: El campo no puede estar vacío"));
     }
     @Test
+    @DisplayName("validate PriceExceed")
     void createPostPriceExceed() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "Comida", "Quesudas", "Rosa", "ifiefbeifb"),
@@ -90,6 +96,7 @@ public class ValidationTest {
     }
 
     @Test
+    @DisplayName("validate NullProductId")
     void createPostNullProductId() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(null,"Arepa", "Comida", "Quesudas", "Rosa", "ifiefbeifb"),
@@ -102,6 +109,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.productId: El id no puede estar vacío"));
     }
     @Test
+    @DisplayName("validate NotPositiveProductId")
     void createPostNotPositiveProductId() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(0,"Arepa", "Comida", "Quesudas", "Rosa", "ifiefbeifb"),
@@ -114,6 +122,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.productId: El id debe ser mayor a cero"));
     }
     @Test
+    @DisplayName("validate BlankProductName")
     void createPostBlankProductName() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,null, "Comida", "Quesudas", "Rosa", "ifiefbeifb"),
@@ -126,6 +135,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.productName: El campo no puede estar vacío"));
     }
     @Test
+    @DisplayName("validate ProductNameEspecialCharacters")
     void createPostProductNameEspecialCharacters() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"$", "Comida", "Quesudas", "Rosa", "ifiefbeifb"),
@@ -138,6 +148,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.productName: El campo no puede poseer caracteres especiales"));
     }
     @Test
+    @DisplayName("validate ProductNameSizeExceed")
     void createPostProductNameSizeExceed() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"uwebfwfbwoefbwufevwefwbfwlivgwovwbvwuvgwwuvuv", "Comida", "Quesudas", "Rosa", "ifiefbeifb"),
@@ -151,6 +162,7 @@ public class ValidationTest {
     }
     //Type
     @Test
+    @DisplayName("validate EmptyType")
     void createPostEmptyType() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", null, "Quesudas", "Rosa", "ifiefbeifb"),
@@ -163,6 +175,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.type: El campo no puede estar vacío"));
     }
     @Test
+    @DisplayName("validate TypeSpecialCharacters")
     void createPostTypeSpecialCharacters() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "$", "Quesudas", "Rosa", "ifiefbeifb"),
@@ -175,6 +188,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.type: El campo no puede poseer caracteres especiales"));
     }
     @Test
+    @DisplayName("validate TypeSizeExceed")
     void createPostTypeSizeExceed() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "asdfghjqeertyuiy", "Quesudas", "Rosa", "ifiefbeifb"),
@@ -188,6 +202,7 @@ public class ValidationTest {
     }
     //Brand
     @Test
+    @DisplayName("validate EmptyBrand")
     void createPostEmptyBrand() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "Arepa", null, "Rosa", "ifiefbeifb"),
@@ -200,6 +215,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.brand: El campo no puede estar vacío"));
     }
     @Test
+    @DisplayName("validate BrandSpecialCharacters")
     void createPostBrandSpecialCharacters() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "Arepa", "#", "Rosa", "ifiefbeifb"),
@@ -212,6 +228,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.brand: El campo no puede poseer caracteres especiales"));
     }
     @Test
+    @DisplayName("validate BrandSizeExceed")
     void createPostBrandSizeExceed() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "Arepa", "dhfhdncjdweidndfjencejjfjdjdeedc", "Rosa", "ifiefbeifb"),
@@ -225,6 +242,7 @@ public class ValidationTest {
     }
     //Color
     @Test
+    @DisplayName("validate EmptyColor")
     void createPostEmptyColor() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "Arepa", "Quesudas", null, "ifiefbeifb"),
@@ -237,6 +255,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.color: El campo no puede estar vacío"));
     }
     @Test
+    @DisplayName("validate ColorSpecialCharacters")
     void createPostColorSpecialCharacters() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "Arepa", "Quesudas", "#", "ifiefbeifb"),
@@ -249,6 +268,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.color: El campo no puede poseer caracteres especiales"));
     }
     @Test
+    @DisplayName("validate ColorSizeExceed")
     void createPostColorSizeExceed() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "Arepa", "Quesudas", "fwnfiewnfiwfbwiefbwufvwuf", "ifiefbeifb"),
@@ -262,6 +282,7 @@ public class ValidationTest {
     }
     //Notes
     @Test
+    @DisplayName("validate NotesSpecialCharacters")
     void createPostNotesSpecialCharacters() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "Arepa", "Quesudas", "rosa", "#"),
@@ -274,6 +295,7 @@ public class ValidationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.notes: El campo no puede poseer caracteres especiales"));
     }
     @Test
+    @DisplayName("validate NotesSizeExceed")
     void createPostNotesSizeExceed() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "Arepa", "Quesudas", "rosa", "ifiefbeifbwifwhifwfowifgwoufgwufwfwvfwuvgwivwhvhewviheoivhewifhewiofhewoifeufgeufgeoivbeoifgeoufgeufgeuwfgwufgwufgwiufgwiufg"),
