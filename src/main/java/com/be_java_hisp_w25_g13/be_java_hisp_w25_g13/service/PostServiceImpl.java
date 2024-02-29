@@ -17,7 +17,6 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.OrderBy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +69,7 @@ public class PostServiceImpl implements IPostService{
         List<Post> posts = new ArrayList<>();
         for (Seller seller:user.get().getFollowing()) {
             List<Post> postBySeller = postRepository
-                .filterByUserIdAndDate(seller.getUserId(), actualDate.minusDays(14), actualDate);
+                .filterByUserIdAndBetweenDate(seller.getUserId(), actualDate.minusDays(14), actualDate);
 
             if (!postBySeller.isEmpty()) {
                 posts.addAll(postBySeller);

@@ -65,9 +65,9 @@ class PostServiceImplTest {
                 postService.orderPostList(listPostSellerExpected, "date_asc").stream().map(Mapper::mapPostToPost2DTO).toList());
 
         lenient().when(userRepository.getUserById(5)).thenReturn(Optional.of(user1));
-        lenient().when(postRepository.filterByUserIdAndDate(2, hourNow.minusDays(14),hourNow)).thenReturn(listPostSellerExpected);
+        lenient().when(postRepository.filterByUserIdAndBetweenDate(2, hourNow.minusDays(14),hourNow)).thenReturn(listPostSellerExpected);
 
-        List<Post> listPostSellerActual= postRepository.filterByUserIdAndDate(2, hourNow.minusDays(14),hourNow);
+        List<Post> listPostSellerActual= postRepository.filterByUserIdAndBetweenDate(2, hourNow.minusDays(14),hourNow);
         SellerPostDTO sellerPostDTOActual = postService.getPostPerSeller(user1.getUserId(), "date_asc");
 
 
@@ -82,7 +82,7 @@ class PostServiceImplTest {
         User user1 = new User(5,"Sebastian",List.of(seller1));
 
         lenient().when(userRepository.getUserById(5)).thenReturn(Optional.of(user1));
-        lenient().when(postRepository.filterByUserIdAndDate(2, hourNow.minusDays(14),hourNow)).thenReturn(List.of());
+        lenient().when(postRepository.filterByUserIdAndBetweenDate(2, hourNow.minusDays(14),hourNow)).thenReturn(List.of());
 
         assertThrows(NotFoundException.class,()->postService.getPostPerSeller(user1.getUserId(), "date_asc"));
     }
@@ -104,7 +104,7 @@ class PostServiceImplTest {
                 new Post(2, hourNow.minusWeeks(2), Utilities.generateProduct(2, "Torta"), 7, 25000.0),
                 new Post(2, hourNow.minusDays(1), Utilities.generateProduct(1, "Sushi"), 6, 15000.0));
         lenient().when(userRepository.getUserById(1)).thenReturn(Optional.of(Utilities.generateUser3Following(1,"Juan Manuel")));
-        lenient().when(postRepository.filterByUserIdAndDate(2,hourNow.minusDays(14),hourNow)).thenReturn(mockPostList);
+        lenient().when(postRepository.filterByUserIdAndBetweenDate(2,hourNow.minusDays(14),hourNow)).thenReturn(mockPostList);
 
         SellerPostDTO sellerPostDTOObtained = postService.getPostPerSeller(1,"date_desc");
 
@@ -128,7 +128,7 @@ class PostServiceImplTest {
                 new Post(2, hourNow.minusWeeks(2), Utilities.generateProduct(2, "Torta"), 7, 25000.0),
                 new Post(2, hourNow.minusDays(1), Utilities.generateProduct(1, "Sushi"), 6, 15000.0));
         lenient().when(userRepository.getUserById(1)).thenReturn(Optional.of(Utilities.generateUser3Following(1, "Juan Manuel")));
-        lenient().when(postRepository.filterByUserIdAndDate(2, hourNow.minusDays(14), hourNow)).thenReturn(mockPostList);
+        lenient().when(postRepository.filterByUserIdAndBetweenDate(2, hourNow.minusDays(14), hourNow)).thenReturn(mockPostList);
 
         SellerPostDTO sellerPostDTOObtained = postService.getPostPerSeller(1, "date_asc");
 
@@ -143,12 +143,12 @@ class PostServiceImplTest {
         String orderBy="date_asc";
 
         when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
-        when(postRepository.filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(Collections.emptyList());
+        when(postRepository.filterByUserIdAndBetweenDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(Collections.emptyList());
 
         // Act & Assert
         assertThrows(NotFoundException.class, ()->postService.getPostPerSeller(user.getUserId(), orderBy));
         verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
-        verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
+        verify(postRepository, atLeastOnce()).filterByUserIdAndBetweenDate(user.getUserId(), hourNow.minusDays(14), hourNow);
     }
     @DisplayName("T-05 PostProductsOrderByDateAsc")
     @Test
@@ -160,12 +160,12 @@ class PostServiceImplTest {
         String orderBy="date_asc";
 
         when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
-        when(postRepository.filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(postsSeller);
+        when(postRepository.filterByUserIdAndBetweenDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(postsSeller);
 
         // Act & Assert
         assertDoesNotThrow(()->postService.getPostPerSeller(user.getUserId(), orderBy));
         verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
-        verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
+        verify(postRepository, atLeastOnce()).filterByUserIdAndBetweenDate(user.getUserId(), hourNow.minusDays(14), hourNow);
     }
     @Test
     @DisplayName("getPost Ok")
@@ -249,12 +249,12 @@ class PostServiceImplTest {
         String orderBy="date_desc";
 
         when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
-        when(postRepository.filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(postsSeller);
+        when(postRepository.filterByUserIdAndBetweenDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(postsSeller);
 
         // Act & Assert
         assertDoesNotThrow(()->postService.getPostPerSeller(user.getUserId(), orderBy));
         verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
-        verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
+        verify(postRepository, atLeastOnce()).filterByUserIdAndBetweenDate(user.getUserId(), hourNow.minusDays(14), hourNow);
     }
     @DisplayName("T-05 PostProductsOrderByDefault")
     @Test
@@ -266,12 +266,12 @@ class PostServiceImplTest {
         String orderBy="none";
 
         when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
-        when(postRepository.filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(postsSeller);
+        when(postRepository.filterByUserIdAndBetweenDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(postsSeller);
 
         // Act & Assert
         assertDoesNotThrow(()->postService.getPostPerSeller(user.getUserId(), orderBy));
         verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
-        verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
+        verify(postRepository, atLeastOnce()).filterByUserIdAndBetweenDate(user.getUserId(), hourNow.minusDays(14), hourNow);
     }
     @DisplayName("T-05 PostProductsOrderByInvalidValue")
     @Test
@@ -283,12 +283,12 @@ class PostServiceImplTest {
         String orderBy="";
 
         when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
-        when(postRepository.filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(postsSeller);
+        when(postRepository.filterByUserIdAndBetweenDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(postsSeller);
 
         // Act & Assert
         assertThrows(BadRequestException.class, ()->postService.getPostPerSeller(user.getUserId(), orderBy));
         verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
-        verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
+        verify(postRepository, atLeastOnce()).filterByUserIdAndBetweenDate(user.getUserId(), hourNow.minusDays(14), hourNow);
     }
     @DisplayName("T-05 UserDontExist")
     @Test
