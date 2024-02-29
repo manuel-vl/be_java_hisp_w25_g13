@@ -50,6 +50,7 @@ class UserServiceImplTest {
     UserServiceImpl userService;
 
     @Test
+    @DisplayName("T-01 followUser Ok")
     void followUserOk() {
         //ARRANGE
         Integer userId = 1;
@@ -63,6 +64,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("T-01 followUser SellerNotFound")
     void followUserSellerNotFound(){
         Integer userId = 1;
         Integer userIdToFollow = 2;
@@ -73,6 +75,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("T-01 followingUser UserNotFound")
     void followingUserUserNotFound(){
         Integer userId = 1;
         Integer userIdToFollow = 2;
@@ -81,12 +84,14 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("T-01 followingUser UserEqualsSeller")
     void followingUserUserEqualsSeller(){
         Integer id = 1;
         assertThrows(BadRequestException.class, () -> userService.followUser(id,id));
     }
 
     @Test
+    @DisplayName("T-01 followingUser SellerIsNotSeller")
     void followingUserSellerIsNotSeller(){
         Integer userId = 1;
         Integer userIdToFollow = 2;
@@ -100,6 +105,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("T-01 followingUser SellerAlreadyFollow")
     void followingUserSellerAlreadyFollow() {
         Integer userId = 4;
         Integer userIdToFollow = 90;
