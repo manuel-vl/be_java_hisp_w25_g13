@@ -22,6 +22,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
 
 import org.springframework.boot.test.context.SpringBootTest;
@@ -83,6 +86,53 @@ class PostServiceImplTest {
 
         assertThrows(NotFoundException.class,()->postService.getPostPerSeller(user1.getUserId(), "date_asc"));
     }
+    @Test
+    @DisplayName("T-06 verify postListDescOrder")
+    void postListOrderDateDesc() {
+        LocalDate hourNow = LocalDate.now();
+        User mockUser = Utilities.generateUser(1, "Juan Manuel");
+        mockUser.setFollowing(List.of(new Seller(2,"Julian",Collections.emptyList())));
+        List<Post> postListExpected = Arrays.asList(
+                new Post(2, hourNow.minusDays(1), Utilities.generateProduct(1, "Sushi"), 6, 15000.0),
+                new Post(2, hourNow.minusWeeks(2), Utilities.generateProduct(2, "Torta"), 7, 25000.0),
+                new Post(2, hourNow.minusWeeks(3), Utilities.generateProduct(1, "Arepa"), 2, 9000.0),
+                new Post(2, hourNow.minusWeeks(4), Utilities.generateProduct(2, "Pan"), 3, 8000.0));
+        SellerPostDTO sellerPostDTOExpected = new SellerPostDTO(1,postListExpected.stream().map(Mapper::mapPostToPost2DTO).toList());
+        List<Post> mockPostList = Arrays.asList(
+                new Post(2, hourNow.minusWeeks(4), Utilities.generateProduct(2, "Pan"), 3, 8000.0),
+                new Post(2, hourNow.minusWeeks(3), Utilities.generateProduct(1, "Arepa"), 2, 9000.0),
+                new Post(2, hourNow.minusWeeks(2), Utilities.generateProduct(2, "Torta"), 7, 25000.0),
+                new Post(2, hourNow.minusDays(1), Utilities.generateProduct(1, "Sushi"), 6, 15000.0));
+        lenient().when(userRepository.getUserById(1)).thenReturn(Optional.of(Utilities.generateUser3Following(1,"Juan Manuel")));
+        lenient().when(postRepository.filterByUserIdAndDate(2,hourNow.minusDays(14),hourNow)).thenReturn(mockPostList);
+
+        SellerPostDTO sellerPostDTOObtained = postService.getPostPerSeller(1,"date_desc");
+
+        assertThat(sellerPostDTOObtained).usingRecursiveComparison().isEqualTo(sellerPostDTOExpected);
+    }
+    @Test
+    @DisplayName("T-06 verify postListAscOrder")
+    void postListOrderDateAsc(){
+        LocalDate hourNow = LocalDate.now();
+        User mockUser = Utilities.generateUser(1, "Juan Manuel");
+        mockUser.setFollowing(List.of(new Seller(2,"Julian",Collections.emptyList())));
+        List<Post> postListExpected = Arrays.asList(
+                new Post(2, hourNow.minusWeeks(4), Utilities.generateProduct(2, "Pan"), 3, 8000.0),
+                new Post(2, hourNow.minusWeeks(3), Utilities.generateProduct(1, "Arepa"), 2, 9000.0),
+                new Post(2, hourNow.minusWeeks(2), Utilities.generateProduct(2, "Torta"), 7, 25000.0),
+                new Post(2, hourNow.minusDays(1), Utilities.generateProduct(1, "Sushi"), 6, 15000.0));
+        SellerPostDTO sellerPostDTOExpected = new SellerPostDTO(1,postListExpected.stream().map(Mapper::mapPostToPost2DTO).toList());
+        List<Post> mockPostList = Arrays.asList(
+                new Post(2, hourNow.minusWeeks(4), Utilities.generateProduct(2, "Pan"), 3, 8000.0),
+                new Post(2, hourNow.minusWeeks(3), Utilities.generateProduct(1, "Arepa"), 2, 9000.0),
+                new Post(2, hourNow.minusWeeks(2), Utilities.generateProduct(2, "Torta"), 7, 25000.0),
+                new Post(2, hourNow.minusDays(1), Utilities.generateProduct(1, "Sushi"), 6, 15000.0));
+        lenient().when(userRepository.getUserById(1)).thenReturn(Optional.of(Utilities.generateUser3Following(1,"Juan Manuel")));
+        lenient().when(postRepository.filterByUserIdAndDate(2,hourNow.minusDays(14),hourNow)).thenReturn(mockPostList);
+
+        SellerPostDTO sellerPostDTOObtained = postService.getPostPerSeller(1,"date_asc");
+
+        assertThat(sellerPostDTOObtained).usingRecursiveComparison().isEqualTo(sellerPostDTOExpected);
 
     @DisplayName("T-05 NotPostProducts")
     @Test
