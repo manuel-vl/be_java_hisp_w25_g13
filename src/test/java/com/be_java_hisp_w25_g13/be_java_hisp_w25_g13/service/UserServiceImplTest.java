@@ -259,6 +259,7 @@ class UserServiceImplTest {
         when(userRepository.getUserById(anyInt())).thenReturn(Optional.of(generateSeller(3, "Felipe", List.of())));
         assertThrows(NotFoundException.class, () -> userService.getNumberOfFollowers(3));
     }
+
     @DisplayName("T-05 NotPostProducts")
     @Test
     void getProductsSellerDontHavePosts(){
