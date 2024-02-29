@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +34,7 @@ public class Utilities {
     public static User generateUser(Integer id, String name){
         return new User(id,name);
     }
+
     public static List<User> generateListUsers() {
         List<User> users = new ArrayList<>();
         users.add(generateUser(4,"Daniela"));
@@ -92,10 +94,12 @@ public class Utilities {
         return new Post(userId, date, generateProduct(productId, productName), 0, 10.0);
     }
     public static List<Post> generateListPost(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-dd");
+        LocalDate date = LocalDate.parse("2024-2-25", formatter);
         List<Post> listPost = new ArrayList<>();
-        listPost.add(generatePost(4,5, LocalDate.parse("2024-2-25"),6,"Laptop"));
-        listPost.add(generatePost(5,6, LocalDate.parse("2024-2-25"),7,"Impresora"));
-        listPost.add(generatePost(6,7, LocalDate.parse("2024-2-25"),8,"Monitor"));
+        listPost.add(generatePost(2,5, date,6,"Laptop"));
+        listPost.add(generatePost(2,6, date,7,"Impresora"));
+        listPost.add(generatePost(2,7, date,8,"Monitor"));
         return listPost;
     }
 

@@ -82,7 +82,7 @@ public class PostServiceImpl implements IPostService{
 
         return new SellerPostDTO(id, orderPostList(posts, orderBy).stream().map(Mapper::mapPostToPost2DTO).toList());
     }
-    private List<Post> orderPostList(List<Post> posts, String orderBy){
+    public List<Post> orderPostList(List<Post> posts, String orderBy){
 
         return switch (orderBy) {
             case "date_asc" -> OrderBy.orderByDateAsc(posts);

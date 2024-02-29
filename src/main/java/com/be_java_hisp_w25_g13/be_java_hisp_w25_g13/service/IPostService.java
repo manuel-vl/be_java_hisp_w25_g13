@@ -10,4 +10,5 @@ public interface IPostService {
     List<PostDTO> getPosts(Integer idUsuario);
     SellerPostDTO getPostPerSeller(Integer id, String order);
 
+
 }
