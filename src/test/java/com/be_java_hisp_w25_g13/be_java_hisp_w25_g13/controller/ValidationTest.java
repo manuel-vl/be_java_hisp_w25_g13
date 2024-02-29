@@ -3,8 +3,6 @@ package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.controller;
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.PostDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.ProductDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,9 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -30,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ValidationTest {
     @Autowired
     private MockMvc mockMvc;
-    
+
     @Test
     @DisplayName("validate NotPositiveUserId")
     void createPostNotPositiveUserId() throws Exception{
@@ -112,7 +108,6 @@ public class ValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.productId: El id no puede estar vacío"));
     }
-
     @Test
     @DisplayName("validate NotPositiveProductId")
     void createPostNotPositiveProductId() throws Exception{
@@ -126,7 +121,6 @@ public class ValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.productId: El id debe ser mayor a cero"));
     }
-
     @Test
     @DisplayName("validate BlankProductName")
     void createPostBlankProductName() throws Exception{
@@ -166,7 +160,6 @@ public class ValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.productName: La longitud no puede superar los 40 caracteres"));
     }
-
     //Type
     @Test
     @DisplayName("validate EmptyType")
@@ -207,7 +200,6 @@ public class ValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.type: La longitud no puede superar los 15 caracteres"));
     }
-
     //Brand
     @Test
     @DisplayName("validate EmptyBrand")
@@ -248,7 +240,6 @@ public class ValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.brand: La longitud no puede superar los 25 caracteres"));
     }
-
     //Color
     @Test
     @DisplayName("validate EmptyColor")
@@ -289,7 +280,6 @@ public class ValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.color: La longitud no puede superar los 15 caracteres"));
     }
-
     //Notes
     @Test
     @DisplayName("validate NotesSpecialCharacters")
