@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @Data
 public class ProductDTO {
-    @NotNull(message = "El  id no puede estar vacío")
+    @NotNull(message = "El id no puede estar vacío")
     @Positive(message = "El id debe ser mayor a cero")
     private Integer productId;
 
@@ -32,6 +32,6 @@ public class ProductDTO {
     private String color;
 
     @Pattern(regexp = "[a-zA-Z0-9 ]+", message = "El campo no puede poseer caracteres especiales")
-    @Size(max = 15, message = "La longitud no puede superar los 80 caracteres")
+    @Size(max = 80, message = "La longitud no puede superar los 80 caracteres")
     private String notes;
 }
