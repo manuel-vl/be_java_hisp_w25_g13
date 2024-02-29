@@ -19,19 +19,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.Mockito.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.*;
 
 import org.springframework.boot.test.context.SpringBootTest;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -40,13 +37,10 @@ import java.util.*;
 class PostServiceImplTest {
     @Mock
     IUserRepository userRepository;
-
     @Mock
     IPostRepository postRepository;
-
     @Mock
     ProductServiceImpl productService;
-
     @InjectMocks
     PostServiceImpl postService;
 
@@ -80,7 +74,6 @@ class PostServiceImplTest {
         assertThat(listPostSellerExpected).isEqualTo(listPostSellerActual);
         assertThat(sellerPostDTOExpected).isEqualTo(sellerPostDTOActual);
     }
-
     @Test
     @DisplayName("T-08 getUserPostPerSeller NoTFoundException")
     void getUserPostPerSellerTestNoTFoundException(){
@@ -157,7 +150,6 @@ class PostServiceImplTest {
         verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
         verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
     }
-
     @DisplayName("T-05 PostProductsOrderByDateAsc")
     @Test
     void getProductsSellerDateAscOK(){
@@ -175,7 +167,6 @@ class PostServiceImplTest {
         verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
         verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
     }
-      
     @Test
     @DisplayName("getPost Ok")
     void getPostsOk(){
@@ -187,7 +178,6 @@ class PostServiceImplTest {
         //Assert
         assertNull(object);
     }
-
     @Test
     @DisplayName("addPost Ok")
     void addPostOk(){
@@ -206,7 +196,6 @@ class PostServiceImplTest {
         //Assert
         assertThat(expectedPostDto).usingRecursiveComparison().isEqualTo(postDto);
     }
-
     @Test
     @DisplayName("addPost NotSeller")
     void addPostNotSeller(){
@@ -221,7 +210,6 @@ class PostServiceImplTest {
         //Act & Assert
         assertThrows(BadRequestException.class, ()->postService.addPost(expectedPostDto));
     }
-
     @Test
     @DisplayName("addPost UserNotFound")
     void addPostNotFoundUser(){
@@ -236,7 +224,6 @@ class PostServiceImplTest {
         //Act & Assert
         assertThrows(NotFoundException.class, ()->postService.addPost(expectedPostDto));
     }
-
     @Test
     @DisplayName("addPost ProductAlreadyPresent")
     void addPostProductAlreadyPresent(){
@@ -252,7 +239,6 @@ class PostServiceImplTest {
         //Act & Assert
         assertThrows(AlreadyExistException.class, ()->postService.addPost(expectedPostDto));
     }
-
     @DisplayName("T-05 PostProductsOrderByDateDesc")
     @Test
     void getProductsSellerDateDescOK(){
@@ -270,7 +256,6 @@ class PostServiceImplTest {
         verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
         verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
     }
-
     @DisplayName("T-05 PostProductsOrderByDefault")
     @Test
     void getProductsSellerDateNoneOK(){
@@ -288,7 +273,6 @@ class PostServiceImplTest {
         verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
         verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
     }
-
     @DisplayName("T-05 PostProductsOrderByInvalidValue")
     @Test
     void getProductsSellerDateDontOK(){
@@ -306,7 +290,6 @@ class PostServiceImplTest {
         verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
         verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
     }
-
     @DisplayName("T-05 UserDontExist")
     @Test
     void getProductsSellerByUserIdNotFound(){

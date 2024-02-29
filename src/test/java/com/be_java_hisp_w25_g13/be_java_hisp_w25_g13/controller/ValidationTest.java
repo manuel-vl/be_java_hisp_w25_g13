@@ -3,8 +3,6 @@ package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.controller;
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.PostDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.ProductDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -29,7 +25,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ValidationTest {
     @Autowired
     private MockMvc mockMvc;
-
 
     @Test
     void createPostNotPositiveUserId() throws Exception{
@@ -106,7 +101,6 @@ public class ValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.productId: El id no puede estar vacío"));
     }
-
     @Test
     void createPostNotPositiveProductId() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
@@ -119,7 +113,6 @@ public class ValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.productId: El id debe ser mayor a cero"));
     }
-
     @Test
     void createPostBlankProductName() throws Exception{
         PostDTO postDto = new PostDTO(1, LocalDate.parse("2024-01-03"),
@@ -156,7 +149,6 @@ public class ValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.productName: La longitud no puede superar los 40 caracteres"));
     }
-
     //Type
     @Test
     void createPostEmptyType() throws Exception{
@@ -194,7 +186,6 @@ public class ValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.type: La longitud no puede superar los 15 caracteres"));
     }
-
     //Brand
     @Test
     void createPostEmptyBrand() throws Exception{
@@ -232,7 +223,6 @@ public class ValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.brand: La longitud no puede superar los 25 caracteres"));
     }
-
     //Color
     @Test
     void createPostEmptyColor() throws Exception{
@@ -270,7 +260,6 @@ public class ValidationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("product.color: La longitud no puede superar los 15 caracteres"));
     }
-
     //Notes
     @Test
     void createPostNotesSpecialCharacters() throws Exception{
