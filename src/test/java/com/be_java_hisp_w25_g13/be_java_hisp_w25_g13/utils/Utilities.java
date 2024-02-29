@@ -1,9 +1,6 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils;
 
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowedDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowersDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.ProductDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.UserDTO;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.*;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Product;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
@@ -97,6 +94,10 @@ public class Utilities {
     }
     public static Post generatePost(Integer userId, Integer postId, LocalDate date, Integer productId, String productName){
         return new Post(userId, date, generateProduct(productId, productName), 0, 10.0);
+    }
+
+    public static PostDTO generatePostDto(Integer userId, Integer postId, LocalDate date, Integer productId, String productName){
+        return new PostDTO(userId, date, generateProductDto(productId, productName), 0, 10.0);
     }
 
     public static List<Product> generateListProducts(){
