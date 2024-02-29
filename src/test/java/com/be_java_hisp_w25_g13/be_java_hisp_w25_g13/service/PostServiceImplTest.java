@@ -24,9 +24,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
@@ -90,7 +93,89 @@ class PostServiceImplTest {
 
         assertThrows(NotFoundException.class,()->postService.getPostPerSeller(user1.getUserId(), "date_asc"));
     }
+    @Test
+    @DisplayName("T-06 verify postListDescOrder")
+    void postListOrderDateDesc() {
+        LocalDate hourNow = LocalDate.now();
+        User mockUser = Utilities.generateUser(1, "Juan Manuel");
+        mockUser.setFollowing(List.of(new Seller(2,"Julian",Collections.emptyList())));
+        List<Post> postListExpected = Arrays.asList(
+                new Post(2, hourNow.minusDays(1), Utilities.generateProduct(1, "Sushi"), 6, 15000.0),
+                new Post(2, hourNow.minusWeeks(2), Utilities.generateProduct(2, "Torta"), 7, 25000.0),
+                new Post(2, hourNow.minusWeeks(3), Utilities.generateProduct(1, "Arepa"), 2, 9000.0),
+                new Post(2, hourNow.minusWeeks(4), Utilities.generateProduct(2, "Pan"), 3, 8000.0));
+        SellerPostDTO sellerPostDTOExpected = new SellerPostDTO(1,postListExpected.stream().map(Mapper::mapPostToPost2DTO).toList());
+        List<Post> mockPostList = Arrays.asList(
+                new Post(2, hourNow.minusWeeks(4), Utilities.generateProduct(2, "Pan"), 3, 8000.0),
+                new Post(2, hourNow.minusWeeks(3), Utilities.generateProduct(1, "Arepa"), 2, 9000.0),
+                new Post(2, hourNow.minusWeeks(2), Utilities.generateProduct(2, "Torta"), 7, 25000.0),
+                new Post(2, hourNow.minusDays(1), Utilities.generateProduct(1, "Sushi"), 6, 15000.0));
+        lenient().when(userRepository.getUserById(1)).thenReturn(Optional.of(Utilities.generateUser3Following(1,"Juan Manuel")));
+        lenient().when(postRepository.filterByUserIdAndDate(2,hourNow.minusDays(14),hourNow)).thenReturn(mockPostList);
 
+        SellerPostDTO sellerPostDTOObtained = postService.getPostPerSeller(1,"date_desc");
+
+        assertThat(sellerPostDTOObtained).usingRecursiveComparison().isEqualTo(sellerPostDTOExpected);
+    }
+    @Test
+    @DisplayName("T-06 verify postListAscOrder")
+    void postListOrderDateAsc(){
+        LocalDate hourNow = LocalDate.now();
+        User mockUser = Utilities.generateUser(1, "Juan Manuel");
+        mockUser.setFollowing(List.of(new Seller(2,"Julian",Collections.emptyList())));
+        List<Post> postListExpected = Arrays.asList(
+                new Post(2, hourNow.minusWeeks(4), Utilities.generateProduct(2, "Pan"), 3, 8000.0),
+                new Post(2, hourNow.minusWeeks(3), Utilities.generateProduct(1, "Arepa"), 2, 9000.0),
+                new Post(2, hourNow.minusWeeks(2), Utilities.generateProduct(2, "Torta"), 7, 25000.0),
+                new Post(2, hourNow.minusDays(1), Utilities.generateProduct(1, "Sushi"), 6, 15000.0));
+        SellerPostDTO sellerPostDTOExpected = new SellerPostDTO(1,postListExpected.stream().map(Mapper::mapPostToPost2DTO).toList());
+        List<Post> mockPostList = Arrays.asList(
+                new Post(2, hourNow.minusWeeks(4), Utilities.generateProduct(2, "Pan"), 3, 8000.0),
+                new Post(2, hourNow.minusWeeks(3), Utilities.generateProduct(1, "Arepa"), 2, 9000.0),
+                new Post(2, hourNow.minusWeeks(2), Utilities.generateProduct(2, "Torta"), 7, 25000.0),
+                new Post(2, hourNow.minusDays(1), Utilities.generateProduct(1, "Sushi"), 6, 15000.0));
+        lenient().when(userRepository.getUserById(1)).thenReturn(Optional.of(Utilities.generateUser3Following(1,"Juan Manuel")));
+        lenient().when(postRepository.filterByUserIdAndDate(2,hourNow.minusDays(14),hourNow)).thenReturn(mockPostList);
+
+        SellerPostDTO sellerPostDTOObtained = postService.getPostPerSeller(1,"date_asc");
+
+        assertThat(sellerPostDTOObtained).usingRecursiveComparison().isEqualTo(sellerPostDTOExpected);
+
+    @DisplayName("T-05 NotPostProducts")
+    @Test
+    void getProductsSellerDontHavePosts(){
+        // Arrange
+        User user=Utilities.generateUser3Following(1, "Manuel");
+        LocalDate hourNow = LocalDate.now();
+        String orderBy="date_asc";
+
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        when(postRepository.filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(Collections.emptyList());
+
+        // Act & Assert
+        assertThrows(NotFoundException.class, ()->postService.getPostPerSeller(user.getUserId(), orderBy));
+        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
+        verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
+    }
+
+    @DisplayName("T-05 PostProductsOrderByDateAsc")
+    @Test
+    void getProductsSellerDateAscOK(){
+        // Arrange
+        User user=Utilities.generateUser3Following(1, "Manuel");
+        LocalDate hourNow=LocalDate.now();
+        List<Post> postsSeller=Utilities.generateListPost();
+        String orderBy="date_asc";
+
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        when(postRepository.filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(postsSeller);
+
+        // Act & Assert
+        assertDoesNotThrow(()->postService.getPostPerSeller(user.getUserId(), orderBy));
+        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
+        verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
+    }
+      
     @Test
     @DisplayName("getPost Ok")
     void getPostsOk(){
@@ -168,4 +253,71 @@ class PostServiceImplTest {
         assertThrows(AlreadyExistException.class, ()->postService.addPost(expectedPostDto));
     }
 
+    @DisplayName("T-05 PostProductsOrderByDateDesc")
+    @Test
+    void getProductsSellerDateDescOK(){
+        // Arrange
+        User user=Utilities.generateUser3Following(1, "Manuel");
+        List<Post> postsSeller=Utilities.generateListPost();
+        LocalDate hourNow=LocalDate.now();
+        String orderBy="date_desc";
+
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        when(postRepository.filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(postsSeller);
+
+        // Act & Assert
+        assertDoesNotThrow(()->postService.getPostPerSeller(user.getUserId(), orderBy));
+        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
+        verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
+    }
+
+    @DisplayName("T-05 PostProductsOrderByDefault")
+    @Test
+    void getProductsSellerDateNoneOK(){
+        // Arrange
+        User user=Utilities.generateUser3Following(1, "Manuel");
+        List<Post> postsSeller=Utilities.generateListPost();
+        LocalDate hourNow=LocalDate.now();
+        String orderBy="none";
+
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        when(postRepository.filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(postsSeller);
+
+        // Act & Assert
+        assertDoesNotThrow(()->postService.getPostPerSeller(user.getUserId(), orderBy));
+        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
+        verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
+    }
+
+    @DisplayName("T-05 PostProductsOrderByInvalidValue")
+    @Test
+    void getProductsSellerDateDontOK(){
+        // Arrange
+        User user=Utilities.generateUser3Following(1, "Manuel");
+        List<Post> postsSeller=Utilities.generateListPost();
+        LocalDate hourNow=LocalDate.now();
+        String orderBy="";
+
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        when(postRepository.filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow)).thenReturn(postsSeller);
+
+        // Act & Assert
+        assertThrows(BadRequestException.class, ()->postService.getPostPerSeller(user.getUserId(), orderBy));
+        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
+        verify(postRepository, atLeastOnce()).filterByUserIdAndDate(user.getUserId(), hourNow.minusDays(14), hourNow);
+    }
+
+    @DisplayName("T-05 UserDontExist")
+    @Test
+    void getProductsSellerByUserIdNotFound(){
+        // Arrange
+        User user=Utilities.generateUser(1, "Manuel");
+        String orderBy="";
+
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NotFoundException.class, ()-> postService.getPostPerSeller(user.getUserId(), orderBy));
+        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
+    }
 }

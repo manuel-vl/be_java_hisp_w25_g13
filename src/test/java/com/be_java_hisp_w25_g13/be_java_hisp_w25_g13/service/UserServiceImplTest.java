@@ -1,57 +1,41 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
 
-
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.UserRepositoryImpl;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities;
-import com.fasterxml.jackson.databind.deser.std.ObjectArrayDeserializer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestTemplate;
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowedDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowersDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.ExceptionDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.NumberDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.PostRepositoryImpl;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.UserRepositoryImpl;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 import java.util.ArrayList;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 import java.util.List;
 
 import static com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 
@@ -347,6 +331,7 @@ class UserServiceImplTest {
         assertThat(followedDTO).usingRecursiveComparison().isNotEqualTo(expectedFollowed);
     }
     @Test
+    @DisplayName("T-02 unfollowUser OK")
     void unFollowUserOK(){
         User userExpected = Utilities.generateUser3Following(4,"Daniela");
         Seller sellerExpected = Utilities.generateSeller(2,"Julian",Utilities.generateListUsers());
@@ -364,6 +349,7 @@ class UserServiceImplTest {
         assertThat(mockSeller.get()).usingRecursiveComparison().isEqualTo(sellerExpected);
     }
     @Test
+    @DisplayName("T-02 unfollowUser User not found")
     void unFollowUserNotFoundUser(){
         Optional<User> mockUser = Optional.empty();
         when(userRepository.getUserById(4)).thenReturn(mockUser);
@@ -371,6 +357,7 @@ class UserServiceImplTest {
         Assertions.assertThrows(NotFoundException.class, () -> userService.unFollowUser(4,2));
     }
     @Test
+    @DisplayName("T-02 unfollowUser Seller not found")
     void unFollowUserNotFoundSeller(){
         Optional<User> mockUser = Optional.of(Utilities.generateUser(4,"Daniela"));
         Optional<User> mockSeller = Optional.empty();
@@ -380,6 +367,7 @@ class UserServiceImplTest {
         Assertions.assertThrows(NotFoundException.class, () -> userService.unFollowUser(4,2));
     }
     @Test
+    @DisplayName("T-02 unfollowUser User to unfollow is not a Seller")
     void unFollowUserNotSeller(){
         Optional<User> mockUser = Optional.of(Utilities.generateUser(4,"Daniela"));
         Optional<User> mockSellerNotSeller = Optional.of(Utilities.generateUser(2,"Julian"));
@@ -389,6 +377,7 @@ class UserServiceImplTest {
         Assertions.assertThrows(NotFoundException.class, () -> userService.unFollowUser(4,2));
     }
     @Test
+    @DisplayName("T-02 unfollowUser Seller to unfollow is not followed by the user")
     void unFolloweUserNotFollowSeller(){
         Optional<User> mockUser = Optional.of(Utilities.generateUser(1,"Juan Manuel"));
         Optional<User> mockSeller = Optional.of(Utilities.generateSeller(2,"Julian",Utilities.generateListUsers()));
