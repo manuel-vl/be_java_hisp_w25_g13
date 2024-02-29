@@ -63,9 +63,9 @@ public class Utilities {
     }
     public static List<Post> generateListPost(){
         List<Post> listPost = new ArrayList<>();
-        listPost.add(generatePost(4,5, LocalDate.parse("2024-2-25"),6,"Laptop"));
-        listPost.add(generatePost(5,6, LocalDate.parse("2024-2-25"),7,"Impresora"));
-        listPost.add(generatePost(6,7, LocalDate.parse("2024-2-25"),8,"Monitor"));
+        listPost.add(generatePost(1,5, LocalDate.now(),6,"Laptop"));
+        listPost.add(generatePost(1,6, LocalDate.now(),7,"Impresora"));
+        listPost.add(generatePost(1,7, LocalDate.now(),8,"Monitor"));
         return listPost;
     }
 }

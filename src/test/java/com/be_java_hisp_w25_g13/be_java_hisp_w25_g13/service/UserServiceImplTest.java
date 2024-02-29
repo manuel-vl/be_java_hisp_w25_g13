@@ -1,10 +1,9 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
 
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowersDTO;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.*;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.ExceptionDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.NumberDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.PostRepositoryImpl;
@@ -17,16 +16,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.Optional;
+
+import java.time.LocalDate;
+import java.util.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import java.util.List;
 
 import static com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -258,5 +258,101 @@ class UserServiceImplTest {
     void getNumberOfFollowersNotFollowersTest() {
         when(userRepository.getUserById(anyInt())).thenReturn(Optional.of(generateSeller(3, "Felipe", List.of())));
         assertThrows(NotFoundException.class, () -> userService.getNumberOfFollowers(3));
+    }
+    @DisplayName("T-05 NotPostProducts")
+    @Test
+    void getProductsSellerDontHavePosts(){
+        // Arrange
+        User user=Utilities.generateUser3Following(1, "Manuel");
+        String orderBy="date_asc";
+
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        when(postRepository.filterByDateAndIdUsuario(user.getUserId(), LocalDate.now())).thenReturn(Collections.emptyList());
+
+        // Act & Assert
+        assertThrows(NotFoundException.class, ()->userService.getPostPerSeller(user.getUserId(), orderBy));
+        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
+        verify(postRepository, atLeastOnce()).filterByDateAndIdUsuario(user.getUserId(), LocalDate.now());
+    }
+    @DisplayName("T-05 PostProductsOrderByDateAsc")
+    @Test
+    void getProductsSellerDateAscOK(){
+        // Arrange
+        User user=Utilities.generateUser3Following(1, "Manuel");
+        List<Post> postsSeller=Utilities.generateListPost();
+
+        String orderBy="date_asc";
+
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        when(postRepository.filterByDateAndIdUsuario(user.getUserId(), LocalDate.now())).thenReturn(postsSeller);
+
+        // Act & Assert
+        assertDoesNotThrow(()->userService.getPostPerSeller(user.getUserId(), orderBy));
+        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
+        verify(postRepository, atLeastOnce()).filterByDateAndIdUsuario(user.getUserId(), LocalDate.now());
+    }
+    @DisplayName("T-05 PostProductsOrderByDateDesc")
+    @Test
+    void getProductsSellerDateDescOK(){
+        // Arrange
+        User user=Utilities.generateUser3Following(1, "Manuel");
+        List<Post> postsSeller=Utilities.generateListPost();
+
+        String orderBy="date_desc";
+
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        when(postRepository.filterByDateAndIdUsuario(user.getUserId(), LocalDate.now())).thenReturn(postsSeller);
+
+        // Act & Assert
+        assertDoesNotThrow(()->userService.getPostPerSeller(user.getUserId(), orderBy));
+        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
+        verify(postRepository, atLeastOnce()).filterByDateAndIdUsuario(user.getUserId(), LocalDate.now());
+    }
+    @DisplayName("T-05 PostProductsOrderByDefault")
+    @Test
+    void getProductsSellerDateNoneOK(){
+        // Arrange
+        User user=Utilities.generateUser3Following(1, "Manuel");
+        List<Post> postsSeller=Utilities.generateListPost();
+
+        String orderBy="none";
+
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        when(postRepository.filterByDateAndIdUsuario(user.getUserId(), LocalDate.now())).thenReturn(postsSeller);
+
+        // Act & Assert
+        assertDoesNotThrow(()->userService.getPostPerSeller(user.getUserId(), orderBy));
+        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
+        verify(postRepository, atLeastOnce()).filterByDateAndIdUsuario(user.getUserId(), LocalDate.now());
+    }
+    @DisplayName("T-05 PostProductsOrderByInvalidValue")
+    @Test
+    void getProductsSellerDateDontOK(){
+        // Arrange
+        User user=Utilities.generateUser3Following(1, "Manuel");
+        List<Post> postsSeller=Utilities.generateListPost();
+
+        String orderBy="";
+
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        when(postRepository.filterByDateAndIdUsuario(user.getUserId(), LocalDate.now())).thenReturn(postsSeller);
+
+        // Act & Assert
+        assertThrows(BadRequestException.class, ()->userService.getPostPerSeller(user.getUserId(), orderBy));
+        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
+        verify(postRepository, atLeastOnce()).filterByDateAndIdUsuario(user.getUserId(), LocalDate.now());
+    }
+    @DisplayName("T-05 UserDontExist")
+    @Test
+    void getProductsSellerByUserIdNotFound(){
+        // Arrange
+        User user=Utilities.generateUser(1, "Manuel");
+        String orderBy="";
+
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NotFoundException.class, ()-> userService.getPostPerSeller(user.getUserId(), orderBy));
+        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
     }
 }
