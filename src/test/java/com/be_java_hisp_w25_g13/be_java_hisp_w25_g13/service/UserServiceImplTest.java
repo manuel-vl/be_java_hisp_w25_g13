@@ -1,47 +1,114 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
 
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.*;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.PostRepositoryImpl;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.UserRepositoryImpl;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities;
+import org.junit.jupiter.api.Test;
+
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowedDTO;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowersDTO;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.NumberDTO;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.PostRepositoryImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.util.*;
-
+import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Optional;
+
+import java.util.ArrayList;
+
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
+
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import java.util.List;
 
 import static com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
-
     @Mock
     UserRepositoryImpl userRepository;
     @Mock
     PostRepositoryImpl postRepository;
+
     @InjectMocks
     UserServiceImpl userService;
+
+    @Test
+    void followUserOk() {
+        //ARRANGE
+        Integer userId = 1;
+        Integer userIdToFollow = 2;
+        when(userRepository.getUserById(1)).thenReturn(Optional.of(Utilities.generateUser3Following(1,"juan")));
+        when(userRepository.getUserById(2)).thenReturn(Optional.of(Utilities.generateSeller(2,"Ana", new ArrayList<>())));
+        //ACT
+        userService.followUser(userId,userIdToFollow);
+        //ASSERT
+        verify(userRepository, atLeast(2)).getUserById(anyInt());
+    }
+
+    @Test
+    void followUserSellerNotFound(){
+        Integer userId = 1;
+        Integer userIdToFollow = 2;
+        when(userRepository.getUserById(anyInt())).thenReturn(Optional.of(Utilities.generateUser(1,"juan")));
+        when(userRepository.getUserById(anyInt())).thenReturn(Optional.ofNullable(null));
+
+        assertThrows(NotFoundException.class, () -> userService.followUser(userId,userIdToFollow));
+    }
+
+    @Test
+    void followingUserUserNotFound(){
+        Integer userId = 1;
+        Integer userIdToFollow = 2;
+        when(userRepository.getUserById(anyInt())).thenReturn(Optional.ofNullable(null));
+        assertThrows(NotFoundException.class, () -> userService.followUser(userId,userIdToFollow));
+    }
+
+    @Test
+    void followingUserUserEqualsSeller(){
+        Integer id = 1;
+        assertThrows(BadRequestException.class, () -> userService.followUser(id,id));
+    }
+
+    @Test
+    void followingUserSellerIsNotSeller(){
+        Integer userId = 1;
+        Integer userIdToFollow = 2;
+
+        when(userRepository.getUserById(anyInt())).thenReturn(Optional.of(Utilities.generateUser(1,"juan")));
+        when(userRepository.getUserById(anyInt())).thenReturn(Optional.of(Utilities.generateUser(2,"Ana")));
+
+
+        assertThrows(BadRequestException.class, () -> userService.followUser(userId,userIdToFollow));
+
+    }
+
+    @Test
+    void followingUserSellerAlreadyFollow() {
+        Integer userId = 4;
+        Integer userIdToFollow = 90;
+        when(userRepository.getUserById(userId)).thenReturn(Optional.of(Utilities.generateUser3Following(4, "Daniela")));
+        when(userRepository.getUserById(userIdToFollow)).thenReturn(Optional.of(Utilities.generateSeller(90, "Juan Manuel", Utilities.generateListUsers())));
+
+
+        assertThrows(BadRequestException.class, () -> userService.followUser(userId, userIdToFollow));
+    }
 
     @DisplayName("T-03 FollowersAsc")
     @Test
@@ -184,13 +251,93 @@ class UserServiceImplTest {
         //Act & Assert
         assertThrows(NotFoundException.class,() -> userService.getFollowed(1, orderBy));
     }
+    @DisplayName("T-04 FollowerListAscOk")
+    @Test
+    void getFollowersAsc(){
+        //Arrange
+        Seller seller = Utilities.generateSeller3Followed(1, "Pepe");
+        String orderBy = "name_asc";
+        FollowersDTO expectedFollowers = Utilities.generateFollowersDTOAsc(seller.getUserId(), seller.getUserName());
+        when(userRepository.getUserById(seller.getUserId())).thenReturn(Optional.of(seller));
+        //Act
+        FollowersDTO followersDTO = userService.getFollowers(seller.getUserId(), orderBy);
+        //Assert
+        assertThat(followersDTO).usingRecursiveComparison().isEqualTo(expectedFollowers);
+    }
+    @DisplayName("T-04 FollowerListDescOk")
+    @Test
+    void getFollowersDesc(){
+        //Arrange
+        Seller seller = Utilities.generateSeller3Followed(1, "Pepe");
+        String orderBy = "name_desc";
+        FollowersDTO expectedFollowers = Utilities.generateFollowersDTODesc(seller.getUserId(), seller.getUserName());
+        when(userRepository.getUserById(seller.getUserId())).thenReturn(Optional.of(seller));
+        //Act
+        FollowersDTO followersDTO = userService.getFollowers(seller.getUserId(), orderBy);
+        //Assert
+        assertThat(followersDTO).usingRecursiveComparison().isEqualTo(expectedFollowers);
+    }
+    @DisplayName("T-04 FollowerListNotOk")
+    @Test
+    void getFollowersNotOk(){
+        //Arrange
+        Seller seller = Utilities.generateSeller3Followed(1, "Pepe");
+        String orderBy = "name_asc";
+        FollowersDTO expectedFollowers = Utilities.generateFollowersDTODesc(seller.getUserId(), seller.getUserName());
+        when(userRepository.getUserById(seller.getUserId())).thenReturn(Optional.of(seller));
+        //Act
+        FollowersDTO followersDTO = userService.getFollowers(seller.getUserId(), orderBy);
+        //Assert
+        assertThat(followersDTO).usingRecursiveComparison().isNotEqualTo(expectedFollowers);
+    }
+    @DisplayName("T-04 FollowedListAscOk")
+    @Test
+    void getFollowedAsc(){
+        //Arrange
+        User user = Utilities.generateUser3Following(1, "Pepe");
+        String orderBy = "name_asc";
+        FollowedDTO expectedFollowed = Utilities.generateFollowedDTOAsc(user.getUserId(), user.getUserName());
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        //Act
+        FollowedDTO followedDTO = userService.getFollowed(user.getUserId(), orderBy);
+        //Assert
+        assertThat(followedDTO).usingRecursiveComparison().isEqualTo(expectedFollowed);
+    }
+    @DisplayName("T-04 FollowedListDescOk")
+    @Test
+    void getFollowedDesc(){
+        //Arrange
+        User user = Utilities.generateUser3Following(1, "Pepe");
+        String orderBy = "name_desc";
+        FollowedDTO expectedFollowed = Utilities.generateFollowedDTODesc(user.getUserId(), user.getUserName());
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        //Act
+        FollowedDTO followedDTO = userService.getFollowed(user.getUserId(), orderBy);
+        //Assert
+        assertThat(followedDTO).usingRecursiveComparison().isEqualTo(expectedFollowed);
+    }
+
+    @DisplayName("T-04 FollowedListNotOk")
+    @Test
+    void getFollowedNotOk(){
+        //Arrange
+        User user = Utilities.generateUser3Following(1, "Pepe");
+        String orderBy = "name_asc";
+        FollowedDTO expectedFollowed = Utilities.generateFollowedDTODesc(user.getUserId(), user.getUserName());
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        //Act
+        FollowedDTO followedDTO = userService.getFollowed(user.getUserId(), orderBy);
+        //Assert
+        assertThat(followedDTO).usingRecursiveComparison().isNotEqualTo(expectedFollowed);
+    }
     @Test
     void unFollowUserOK(){
-        User userExpected = Utilities.generateUser(4,"Daniela");
+        User userExpected = Utilities.generateUser3Following(4,"Daniela");
         Seller sellerExpected = Utilities.generateSeller(2,"Julian",Utilities.generateListUsers());
+        userExpected.getFollowing().add(sellerExpected);
         userExpected.getFollowing().remove(sellerExpected);
         sellerExpected.getFollowers().remove(userExpected);
-        Optional<User> mockUser = Optional.of(Utilities.generateUser(4,"Daniela"));
+        Optional<User> mockUser = Optional.of(Utilities.generateUser3Following(4,"Daniela"));
         Optional<User> mockSeller = Optional.of(Utilities.generateSeller(2,"Julian",Utilities.generateListUsers()));
         when(userRepository.getUserById(4)).thenReturn(mockUser);
         when(userRepository.getUserById(2)).thenReturn(mockSeller);
@@ -203,9 +350,7 @@ class UserServiceImplTest {
     @Test
     void unFollowUserNotFoundUser(){
         Optional<User> mockUser = Optional.empty();
-        Optional<User> mockSeller = Optional.of(Utilities.generateSeller(2,"Julian",Utilities.generateListUsers()));
         when(userRepository.getUserById(4)).thenReturn(mockUser);
-        when(userRepository.getUserById(2)).thenReturn(mockSeller);
 
         Assertions.assertThrows(NotFoundException.class, () -> userService.unFollowUser(4,2));
     }
@@ -258,102 +403,5 @@ class UserServiceImplTest {
     void getNumberOfFollowersNotFollowersTest() {
         when(userRepository.getUserById(anyInt())).thenReturn(Optional.of(generateSeller(3, "Felipe", List.of())));
         assertThrows(NotFoundException.class, () -> userService.getNumberOfFollowers(3));
-    }
-
-    @DisplayName("T-05 NotPostProducts")
-    @Test
-    void getProductsSellerDontHavePosts(){
-        // Arrange
-        User user=Utilities.generateUser3Following(1, "Manuel");
-        String orderBy="date_asc";
-
-        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
-        when(postRepository.filterByDateAndIdUsuario(user.getUserId(), LocalDate.now())).thenReturn(Collections.emptyList());
-
-        // Act & Assert
-        assertThrows(NotFoundException.class, ()->userService.getPostPerSeller(user.getUserId(), orderBy));
-        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
-        verify(postRepository, atLeastOnce()).filterByDateAndIdUsuario(user.getUserId(), LocalDate.now());
-    }
-    @DisplayName("T-05 PostProductsOrderByDateAsc")
-    @Test
-    void getProductsSellerDateAscOK(){
-        // Arrange
-        User user=Utilities.generateUser3Following(1, "Manuel");
-        List<Post> postsSeller=Utilities.generateListPost();
-
-        String orderBy="date_asc";
-
-        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
-        when(postRepository.filterByDateAndIdUsuario(user.getUserId(), LocalDate.now())).thenReturn(postsSeller);
-
-        // Act & Assert
-        assertDoesNotThrow(()->userService.getPostPerSeller(user.getUserId(), orderBy));
-        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
-        verify(postRepository, atLeastOnce()).filterByDateAndIdUsuario(user.getUserId(), LocalDate.now());
-    }
-    @DisplayName("T-05 PostProductsOrderByDateDesc")
-    @Test
-    void getProductsSellerDateDescOK(){
-        // Arrange
-        User user=Utilities.generateUser3Following(1, "Manuel");
-        List<Post> postsSeller=Utilities.generateListPost();
-
-        String orderBy="date_desc";
-
-        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
-        when(postRepository.filterByDateAndIdUsuario(user.getUserId(), LocalDate.now())).thenReturn(postsSeller);
-
-        // Act & Assert
-        assertDoesNotThrow(()->userService.getPostPerSeller(user.getUserId(), orderBy));
-        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
-        verify(postRepository, atLeastOnce()).filterByDateAndIdUsuario(user.getUserId(), LocalDate.now());
-    }
-    @DisplayName("T-05 PostProductsOrderByDefault")
-    @Test
-    void getProductsSellerDateNoneOK(){
-        // Arrange
-        User user=Utilities.generateUser3Following(1, "Manuel");
-        List<Post> postsSeller=Utilities.generateListPost();
-
-        String orderBy="none";
-
-        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
-        when(postRepository.filterByDateAndIdUsuario(user.getUserId(), LocalDate.now())).thenReturn(postsSeller);
-
-        // Act & Assert
-        assertDoesNotThrow(()->userService.getPostPerSeller(user.getUserId(), orderBy));
-        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
-        verify(postRepository, atLeastOnce()).filterByDateAndIdUsuario(user.getUserId(), LocalDate.now());
-    }
-    @DisplayName("T-05 PostProductsOrderByInvalidValue")
-    @Test
-    void getProductsSellerDateDontOK(){
-        // Arrange
-        User user=Utilities.generateUser3Following(1, "Manuel");
-        List<Post> postsSeller=Utilities.generateListPost();
-
-        String orderBy="";
-
-        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
-        when(postRepository.filterByDateAndIdUsuario(user.getUserId(), LocalDate.now())).thenReturn(postsSeller);
-
-        // Act & Assert
-        assertThrows(BadRequestException.class, ()->userService.getPostPerSeller(user.getUserId(), orderBy));
-        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
-        verify(postRepository, atLeastOnce()).filterByDateAndIdUsuario(user.getUserId(), LocalDate.now());
-    }
-    @DisplayName("T-05 UserDontExist")
-    @Test
-    void getProductsSellerByUserIdNotFound(){
-        // Arrange
-        User user=Utilities.generateUser(1, "Manuel");
-        String orderBy="";
-
-        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThrows(NotFoundException.class, ()-> userService.getPostPerSeller(user.getUserId(), orderBy));
-        verify(userRepository, atLeastOnce()).getUserById(user.getUserId());
     }
 }

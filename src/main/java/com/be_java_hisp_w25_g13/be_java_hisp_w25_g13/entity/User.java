@@ -16,9 +16,10 @@ public class User {
     public User(Integer userId, String userName){
         this.userId = userId;
         this.userName = userName;
+        this.following = new ArrayList<>();
     }
 
     private Integer userId;
     private String userName;
-    private List<Seller> following = new ArrayList<>();
+    private List<Seller> following;
 }
