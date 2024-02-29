@@ -3,41 +3,35 @@ package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.UserRepositoryImpl;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.PostRepositoryImpl;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities;
-import org.junit.jupiter.api.Test;
-
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowedDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowersDTO;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.NumberDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.NumberDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.PostRepositoryImpl;
+
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
-import static org.assertj.core.api.Assertions.assertThat;
-
-
-import java.util.ArrayList;
-
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
+import java.util.Optional;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import static com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities.*;
-import static org.mockito.Mockito.when;
-
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -45,7 +39,6 @@ class UserServiceImplTest {
     UserRepositoryImpl userRepository;
     @Mock
     PostRepositoryImpl postRepository;
-
     @InjectMocks
     UserServiceImpl userService;
 
@@ -61,7 +54,6 @@ class UserServiceImplTest {
         //ASSERT
         verify(userRepository, atLeast(2)).getUserById(anyInt());
     }
-
     @Test
     void followUserSellerNotFound(){
         Integer userId = 1;
@@ -71,7 +63,6 @@ class UserServiceImplTest {
 
         assertThrows(NotFoundException.class, () -> userService.followUser(userId,userIdToFollow));
     }
-
     @Test
     void followingUserUserNotFound(){
         Integer userId = 1;
@@ -79,13 +70,11 @@ class UserServiceImplTest {
         when(userRepository.getUserById(anyInt())).thenReturn(Optional.ofNullable(null));
         assertThrows(NotFoundException.class, () -> userService.followUser(userId,userIdToFollow));
     }
-
     @Test
     void followingUserUserEqualsSeller(){
         Integer id = 1;
         assertThrows(BadRequestException.class, () -> userService.followUser(id,id));
     }
-
     @Test
     void followingUserSellerIsNotSeller(){
         Integer userId = 1;
@@ -96,9 +85,7 @@ class UserServiceImplTest {
 
 
         assertThrows(BadRequestException.class, () -> userService.followUser(userId,userIdToFollow));
-
     }
-
     @Test
     void followingUserSellerAlreadyFollow() {
         Integer userId = 4;
@@ -106,10 +93,8 @@ class UserServiceImplTest {
         when(userRepository.getUserById(userId)).thenReturn(Optional.of(Utilities.generateUser3Following(4, "Daniela")));
         when(userRepository.getUserById(userIdToFollow)).thenReturn(Optional.of(Utilities.generateSeller(90, "Juan Manuel", Utilities.generateListUsers())));
 
-
         assertThrows(BadRequestException.class, () -> userService.followUser(userId, userIdToFollow));
     }
-
     @DisplayName("T-03 FollowersAsc")
     @Test
     void getFollowersOrderAscPresent() {
@@ -316,7 +301,6 @@ class UserServiceImplTest {
         //Assert
         assertThat(followedDTO).usingRecursiveComparison().isEqualTo(expectedFollowed);
     }
-
     @DisplayName("T-04 FollowedListNotOk")
     @Test
     void getFollowedNotOk(){
@@ -387,6 +371,7 @@ class UserServiceImplTest {
         Assertions.assertThrows(BadRequestException.class, () -> userService.unFollowUser(1,2));
     }
     @Test
+    @DisplayName("T-07 Get number of followers OK")
     void getNumberOfFollowersOkTest() {
         NumberDTO expectedNumberDTO = new NumberDTO(3, "Felipe", 3);
 
@@ -395,16 +380,19 @@ class UserServiceImplTest {
         assertThat(actualNumberDTO).usingRecursiveComparison().isEqualTo(expectedNumberDTO);
     }
     @Test
+    @DisplayName("T-07 Get number of followers. Id not found")
     void getNumberOfFollowersNotFoundTest() {
         when(userRepository.getUserById(anyInt())).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, () -> userService.getNumberOfFollowers(3));
     }
     @Test
+    @DisplayName("T-07 Get number of followers. Id is not a seller")
     void getNumberOfFollowersBadRequestTest() {
         when(userRepository.getUserById(anyInt())).thenReturn(Optional.of(generateUser(4, "Daniela")));
         assertThrows(BadRequestException.class, () -> userService.getNumberOfFollowers(4));
     }
     @Test
+    @DisplayName("T-07 Get number of followers. Seller doesnt have followers")
     void getNumberOfFollowersNotFollowersTest() {
         when(userRepository.getUserById(anyInt())).thenReturn(Optional.of(generateSeller(3, "Felipe", List.of())));
         assertThrows(NotFoundException.class, () -> userService.getNumberOfFollowers(3));
