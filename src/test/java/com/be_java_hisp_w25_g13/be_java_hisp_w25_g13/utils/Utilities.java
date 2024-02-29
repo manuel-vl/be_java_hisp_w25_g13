@@ -1,8 +1,6 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils;
 
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowedDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.FollowersDTO;
-import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.UserDTO;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.*;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Product;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
@@ -86,12 +84,36 @@ public class Utilities {
     public static Product generateProduct(Integer id, String name){
         return new Product(id, name, "Comida", "Carulla", "Verde", "Expira en 3 dias");
     }
+
+    public static ProductDTO generateProductDto(Integer id, String name){
+        return new ProductDTO(id, name, "Comida", "Carulla", "Verde", "Expira en 3 dias");
+    }
     public static String serializeUserDTO(UserDTO userDTO) throws JsonProcessingException{
         ObjectWriter ow = new ObjectMapper().writer();
         return ow.writeValueAsString(userDTO);
     }
     public static Post generatePost(Integer userId, Integer postId, LocalDate date, Integer productId, String productName){
         return new Post(userId, date, generateProduct(productId, productName), 0, 10.0);
+    }
+
+    public static PostDTO generatePostDto(Integer userId, Integer postId, LocalDate date, Integer productId, String productName){
+        return new PostDTO(userId, date, generateProductDto(productId, productName), 0, 10.0);
+    }
+
+    public static List<Product> generateListProducts(){
+        return List.of(
+                generateProduct(1, "arepa"),
+                generateProduct(2, "papa"),
+                generateProduct(3, "arequipe")
+        );
+    }
+
+    public static List<ProductDTO> generateListProductsDto(){
+        return List.of(
+                generateProductDto(1, "arepa"),
+                generateProductDto(2, "papa"),
+                generateProductDto(3, "arequipe")
+        );
     }
     public static List<Post> generateListPost(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-dd");
