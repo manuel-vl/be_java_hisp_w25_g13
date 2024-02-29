@@ -347,6 +347,7 @@ class UserServiceImplTest {
         assertThat(followedDTO).usingRecursiveComparison().isNotEqualTo(expectedFollowed);
     }
     @Test
+    @DisplayName("T-02 unfollowUser OK")
     void unFollowUserOK(){
         User userExpected = Utilities.generateUser3Following(4,"Daniela");
         Seller sellerExpected = Utilities.generateSeller(2,"Julian",Utilities.generateListUsers());
@@ -364,6 +365,7 @@ class UserServiceImplTest {
         assertThat(mockSeller.get()).usingRecursiveComparison().isEqualTo(sellerExpected);
     }
     @Test
+    @DisplayName("T-02 unfollowUser User not found")
     void unFollowUserNotFoundUser(){
         Optional<User> mockUser = Optional.empty();
         when(userRepository.getUserById(4)).thenReturn(mockUser);
@@ -371,6 +373,7 @@ class UserServiceImplTest {
         Assertions.assertThrows(NotFoundException.class, () -> userService.unFollowUser(4,2));
     }
     @Test
+    @DisplayName("T-02 unfollowUser Seller not found")
     void unFollowUserNotFoundSeller(){
         Optional<User> mockUser = Optional.of(Utilities.generateUser(4,"Daniela"));
         Optional<User> mockSeller = Optional.empty();
@@ -380,6 +383,7 @@ class UserServiceImplTest {
         Assertions.assertThrows(NotFoundException.class, () -> userService.unFollowUser(4,2));
     }
     @Test
+    @DisplayName("T-02 unfollowUser User to unfollow is not a Seller")
     void unFollowUserNotSeller(){
         Optional<User> mockUser = Optional.of(Utilities.generateUser(4,"Daniela"));
         Optional<User> mockSellerNotSeller = Optional.of(Utilities.generateUser(2,"Julian"));
@@ -389,6 +393,7 @@ class UserServiceImplTest {
         Assertions.assertThrows(NotFoundException.class, () -> userService.unFollowUser(4,2));
     }
     @Test
+    @DisplayName("T-02 unfollowUser Seller to unfollow is not followed by the user")
     void unFolloweUserNotFollowSeller(){
         Optional<User> mockUser = Optional.of(Utilities.generateUser(1,"Juan Manuel"));
         Optional<User> mockSeller = Optional.of(Utilities.generateSeller(2,"Julian",Utilities.generateListUsers()));
