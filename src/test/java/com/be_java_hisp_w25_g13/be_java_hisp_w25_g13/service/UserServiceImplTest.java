@@ -28,6 +28,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Arrays;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -346,11 +348,12 @@ class UserServiceImplTest {
     }
     @Test
     void unFollowUserOK(){
-        User userExpected = Utilities.generateUser(4,"Daniela");
+        User userExpected = Utilities.generateUser3Following(4,"Daniela");
         Seller sellerExpected = Utilities.generateSeller(2,"Julian",Utilities.generateListUsers());
+        userExpected.getFollowing().add(sellerExpected);
         userExpected.getFollowing().remove(sellerExpected);
         sellerExpected.getFollowers().remove(userExpected);
-        Optional<User> mockUser = Optional.of(Utilities.generateUser(4,"Daniela"));
+        Optional<User> mockUser = Optional.of(Utilities.generateUser3Following(4,"Daniela"));
         Optional<User> mockSeller = Optional.of(Utilities.generateSeller(2,"Julian",Utilities.generateListUsers()));
         when(userRepository.getUserById(4)).thenReturn(mockUser);
         when(userRepository.getUserById(2)).thenReturn(mockSeller);
@@ -363,9 +366,7 @@ class UserServiceImplTest {
     @Test
     void unFollowUserNotFoundUser(){
         Optional<User> mockUser = Optional.empty();
-        Optional<User> mockSeller = Optional.of(Utilities.generateSeller(2,"Julian",Utilities.generateListUsers()));
         when(userRepository.getUserById(4)).thenReturn(mockUser);
-        when(userRepository.getUserById(2)).thenReturn(mockSeller);
 
         Assertions.assertThrows(NotFoundException.class, () -> userService.unFollowUser(4,2));
     }
