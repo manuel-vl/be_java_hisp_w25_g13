@@ -1,9 +1,13 @@
 package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.service;
 
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.PostDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.SellerPostDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Post;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Product;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Seller;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.User;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.AlreadyExistException;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.BadRequestException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.exception.NotFoundException;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IPostRepository;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.IUserRepository;
@@ -19,8 +23,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
@@ -34,6 +40,9 @@ class PostServiceImplTest {
 
     @Mock
     IPostRepository postRepository;
+
+    @Mock
+    ProductServiceImpl productService;
 
     @InjectMocks
     PostServiceImpl postService;
@@ -80,6 +89,83 @@ class PostServiceImplTest {
         lenient().when(postRepository.filterByUserIdAndDate(2, hourNow.minusDays(14),hourNow)).thenReturn(List.of());
 
         assertThrows(NotFoundException.class,()->postService.getPostPerSeller(user1.getUserId(), "date_asc"));
+    }
+
+    @Test
+    @DisplayName("getPost Ok")
+    void getPostsOk(){
+        //Arrange
+        Integer id = 1;
+        //Act
+        Object object = postService.getPosts(1);
+
+        //Assert
+        assertNull(object);
+    }
+
+    @Test
+    @DisplayName("addPost Ok")
+    void addPostOk(){
+        //Arrange
+        Seller seller = Utilities.generateSeller(1, "pepe", Collections.emptyList());
+        Post post = Utilities.generatePost(1, 1, LocalDate.parse("2024-02-20"), 1, "Arepa");
+        PostDTO expectedPostDto = Utilities.generatePostDto(1, 1, LocalDate.parse("2024-02-20"), 1, "Arepa");
+
+        when(userRepository.getUserById(seller.getUserId())).thenReturn(Optional.of(seller));
+        when(postRepository.addPost(post)).thenReturn(post);
+        when(productService.getProductById(post.getProduct().getProductId())).thenReturn(Optional.empty());
+
+        //Act
+        PostDTO postDto = postService.addPost(expectedPostDto);
+
+        //Assert
+        assertThat(expectedPostDto).usingRecursiveComparison().isEqualTo(postDto);
+    }
+
+    @Test
+    @DisplayName("addPost NotSeller")
+    void addPostNotSeller(){
+        //Arrange
+        User user = Utilities.generateUser(1, "pepe");
+        Post post = Utilities.generatePost(1, 1, LocalDate.parse("2024-02-20"), 1, "Arepa");
+        PostDTO expectedPostDto = Utilities.generatePostDto(1, 1, LocalDate.parse("2024-02-20"), 1, "Arepa");
+
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.of(user));
+        when(productService.getProductById(post.getProduct().getProductId())).thenReturn(Optional.empty());
+
+        //Act & Assert
+        assertThrows(BadRequestException.class, ()->postService.addPost(expectedPostDto));
+    }
+
+    @Test
+    @DisplayName("addPost UserNotFound")
+    void addPostNotFoundUser(){
+        //Arrange
+        User user = Utilities.generateUser(1, "pepe");
+        Post post = Utilities.generatePost(1, 1, LocalDate.parse("2024-02-20"), 1, "Arepa");
+        PostDTO expectedPostDto = Utilities.generatePostDto(1, 1, LocalDate.parse("2024-02-20"), 1, "Arepa");
+
+        when(userRepository.getUserById(user.getUserId())).thenReturn(Optional.empty());
+        when(productService.getProductById(post.getProduct().getProductId())).thenReturn(Optional.empty());
+
+        //Act & Assert
+        assertThrows(NotFoundException.class, ()->postService.addPost(expectedPostDto));
+    }
+
+    @Test
+    @DisplayName("addPost ProductAlreadyPresent")
+    void addPostProductAlreadyPresent(){
+        //Arrange
+        Seller seller = Utilities.generateSeller(1, "pepe", Collections.emptyList());
+        Post post = Utilities.generatePost(1, 1, LocalDate.parse("2024-02-20"), 1, "Arepa");
+        Product alreadyPrensentProduct = Utilities.generateProduct(1, "Arepa");
+        PostDTO expectedPostDto = Utilities.generatePostDto(1, 1, LocalDate.parse("2024-02-20"), 1, "Arepa");
+
+        when(userRepository.getUserById(seller.getUserId())).thenReturn(Optional.of(seller));
+        when(productService.getProductById(post.getProduct().getProductId())).thenReturn(Optional.of(alreadyPrensentProduct));
+
+        //Act & Assert
+        assertThrows(AlreadyExistException.class, ()->postService.addPost(expectedPostDto));
     }
 
 }

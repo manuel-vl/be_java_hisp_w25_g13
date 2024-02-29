@@ -4,6 +4,7 @@ import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.ProductDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.entity.Product;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.repository.ProductRepositoryImpl;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.utils.Utilities;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,6 +28,7 @@ class ProductServiceImplTest {
 
 
     @Test
+    @DisplayName("addProduct Ok")
     void addProductOk(){
         //Arrange
         ProductDTO productDto = Utilities.generateProductDto(1, "arepa");
@@ -38,6 +40,7 @@ class ProductServiceImplTest {
         verify(productRepository, atLeastOnce()).addProduct(product);
     }
     @Test
+    @DisplayName("listProducts Ok")
     void listProductsOk(){
         //Arrange
         List<Product> repoListProducts = Utilities.generateListProducts();
@@ -50,6 +53,7 @@ class ProductServiceImplTest {
         assertThat(expectedListProductsDto).usingRecursiveComparison().isEqualTo(listProductsDto);
     }
     @Test
+    @DisplayName("getProductById Ok")
     void getProductByIdOk(){
         //Arrange
         Integer id = 1;
