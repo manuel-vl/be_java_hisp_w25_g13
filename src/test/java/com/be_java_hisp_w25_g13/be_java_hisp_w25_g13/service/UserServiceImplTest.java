@@ -68,8 +68,8 @@ class UserServiceImplTest {
         //ARRANGE
         Integer userId = 1;
         Integer userIdToFollow = 2;
-        when(userRepository.getUserById(anyInt())).thenReturn(Optional.of(Utilities.generateUser(1,"juan")));
-        when(userRepository.getUserById(anyInt())).thenReturn(Optional.of(Utilities.generateSeller(2,"Ana", new ArrayList<>())));
+        when(userRepository.getUserById(1)).thenReturn(Optional.of(Utilities.generateUser3Following(1,"juan")));
+        when(userRepository.getUserById(2)).thenReturn(Optional.of(Utilities.generateSeller(2,"Ana", new ArrayList<>())));
         //ACT
         userService.followUser(userId,userIdToFollow);
         //ASSERT
