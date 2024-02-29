@@ -387,6 +387,7 @@ class UserServiceImplTest {
         Assertions.assertThrows(BadRequestException.class, () -> userService.unFollowUser(1,2));
     }
     @Test
+    @DisplayName("T-07 Get number of followers OK")
     void getNumberOfFollowersOkTest() {
         NumberDTO expectedNumberDTO = new NumberDTO(3, "Felipe", 3);
 
@@ -395,16 +396,19 @@ class UserServiceImplTest {
         assertThat(actualNumberDTO).usingRecursiveComparison().isEqualTo(expectedNumberDTO);
     }
     @Test
+    @DisplayName("T-07 Get number of followers. Id not found")
     void getNumberOfFollowersNotFoundTest() {
         when(userRepository.getUserById(anyInt())).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, () -> userService.getNumberOfFollowers(3));
     }
     @Test
+    @DisplayName("T-07 Get number of followers. Id is not a seller")
     void getNumberOfFollowersBadRequestTest() {
         when(userRepository.getUserById(anyInt())).thenReturn(Optional.of(generateUser(4, "Daniela")));
         assertThrows(BadRequestException.class, () -> userService.getNumberOfFollowers(4));
     }
     @Test
+    @DisplayName("T-07 Get number of followers. Seller doesnt have followers")
     void getNumberOfFollowersNotFollowersTest() {
         when(userRepository.getUserById(anyInt())).thenReturn(Optional.of(generateSeller(3, "Felipe", List.of())));
         assertThrows(NotFoundException.class, () -> userService.getNumberOfFollowers(3));
