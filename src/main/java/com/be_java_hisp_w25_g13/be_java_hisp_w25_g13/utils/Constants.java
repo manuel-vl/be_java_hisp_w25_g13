@@ -13,7 +13,7 @@ public class Constants {
   public static String BAD_NAME_ORDER_TYPE_ERROR_MESSAGE = "El metodo de ordenamiento debe estar entre name_asc, name_desc o no tener ninguno";
   public static String BAD_DATE_ORDER_TYPE_ERROR_MESSAGE = "El metodo de ordenamiento debe estar entre date_asc, date_desc o no tener ninguno";
   public static String PRODUCT_ALREADY_HAVE_POST_ERROR_MESSAGE = "Ya existe un post para este producto";
-  public static String FOLLOWED_DONT_HAVE_POSTS_ERROR_MESSAGE = "Ninguno de los seguidos de este usuario ha realizado publicaciones";
+  public static String FOLLOWED_DONT_HAVE_POSTS_ERROR_MESSAGE = "Ninguno de los seguidos de este usuario ha realizado publicaciones en las últimas dos semanas";
   public static final String ORDER_NAME_ASC = "name_asc";
   public static final String ORDER_NAME_DESC = "name_desc";
   public static final String ORDER_DATE_ASC = "date_asc";
