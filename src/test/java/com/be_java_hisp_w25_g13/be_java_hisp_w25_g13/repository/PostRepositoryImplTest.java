@@ -63,7 +63,7 @@ class PostRepositoryImplTest {
         List<Post> expectedListPost = Utilities.generateListPosts();
 
         //Act
-        List<Post> posts = postRepository.filterByUserIdAndDate(1, LocalDate.parse("2024-02-15"), LocalDate.parse("2024-02-29"));
+        List<Post> posts = postRepository.filterByUserIdAndBetweenDate(1, LocalDate.parse("2024-02-15"), LocalDate.parse("2024-02-29"));
 
         //Assert
         assertThat(expectedListPost).isEqualTo(posts);
