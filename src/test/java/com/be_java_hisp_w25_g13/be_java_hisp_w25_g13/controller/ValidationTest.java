@@ -2,6 +2,7 @@ package com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.controller;
 
 
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.PostDTO;
+import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.PostResponseDTO;
 import com.be_java_hisp_w25_g13.be_java_hisp_w25_g13.dto.ProductDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.time.LocalDate;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,23 +33,29 @@ public class ValidationTest {
     @Test
     @DisplayName("validate NotPositiveUserId")
     void createPostNotPositiveUserId() throws Exception{
-        PostDTO postDto = new PostDTO(0, LocalDate.parse("2024-01-03"),
+        PostDTO postDto = new PostDTO(21, LocalDate.parse("2024-01-03"),
+                new ProductDTO(1,"Arepa", "Comida", "Quesudas", "Rosa", "ifiefbeifb"),
+                1, 13D);
+        PostDTO response = new PostDTO(21, LocalDate.parse("2024-01-03"),
                 new ProductDTO(1,"Arepa", "Comida", "Quesudas", "Rosa", "ifiefbeifb"),
                 1, 13D);
 
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/products/post")
+        String expected = serializePost(response);
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/products/post")
                 .contentType(MediaType.APPLICATION_JSON).content(serializePost(
                         postDto)))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.messages").value("userId: El id debe ser mayor a cero"));
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(21))
+                .andReturn();
+        
     }
     @Test
     @DisplayName("validate NullDate")
     void createPostNullDate() throws Exception{
-        PostDTO postDto = new PostDTO(1, null,
-                new ProductDTO(1,"Arepa", "Comida", "Quesudas", "Rosa", "ifiefbeifb"),
+        PostDTO postDto = new PostDTO(21, null,
+                new ProductDTO(21,"Arepa", "Comida", "Quesudas", "Rosa", "ifiefbeifb"),
                 1, 13D);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/products/post")
