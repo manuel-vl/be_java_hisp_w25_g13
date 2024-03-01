@@ -93,11 +93,11 @@ public class Utilities {
         return ow.writeValueAsString(userDTO);
     }
     public static Post generatePost(Integer userId, Integer postId, LocalDate date, Integer productId, String productName){
-        return new Post(userId, date, generateProduct(productId, productName), 0, 10.0);
+        return new Post(userId, date, generateProduct(productId, productName), 1, 10.0);
     }
 
     public static PostDTO generatePostDto(Integer userId, Integer postId, LocalDate date, Integer productId, String productName){
-        return new PostDTO(userId, date, generateProductDto(productId, productName), 0, 10.0);
+        return new PostDTO(userId, date, generateProductDto(productId, productName), 1, 10.0);
     }
 
     public static List<Product> generateListProducts(){
@@ -152,6 +152,17 @@ public class Utilities {
                 sellerId,
                 name,
                 generateListSellerToUserDtoDesc()
+        );
+    }
+
+    public static Post generatePostWithId(Integer userId, Integer postId, LocalDate date, Integer productId, String productName){
+        return new Post(userId, postId, date, generateProduct(productId, productName), 1, 10.0);
+    }
+    public static List<Post> generateListPosts(){
+        return List.of(
+                generatePostWithId(21, 0, LocalDate.parse("2024-02-19"), 1, "Arepa"),
+                generatePostWithId(21, 1, LocalDate.parse("2024-02-26"), 2, "Papas"),
+                generatePostWithId(21, 3, LocalDate.parse("2024-02-28"), 4, "Azucar")
         );
     }
 }
